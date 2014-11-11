@@ -5,10 +5,12 @@
 *.war
 *.ear
 
-hibernate.cfg.xml
 .settings/*.*
-WebRoot\WEB-INF\classes\hibernate.cfg.xml
-config\hibernate.cfg.xml
-.project
+*hibernate.cfg.xml
 hibernate.cfg.xml
+java/hibernate.cfg.xml
+src/java/hibernate.cfg.xml
+Twittbook/src/java/hibernate.cfg.xml
+Twittbook/Twittbook/src/java/hibernate.cfg.xml
+.project
 .classpath
