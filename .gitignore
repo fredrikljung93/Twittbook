@@ -1,13 +1,20 @@
 *.class
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
 # Package Files #
 *.jar
 *.war
 *.ear
 
+<<<<<<< HEAD
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /Twittbook/nbproject/private/
+=======
+hibernate.cfg.xml
+.settings/*.*
+WebRoot\WEB-INF\classes\hibernate.cfg.xml
+config\hibernate.cfg.xml
+.project
+hibernate.cfg.xml
+.classpath
+>>>>>>> 2a1a4101349ae9894707087c5202b7fe7665942a
