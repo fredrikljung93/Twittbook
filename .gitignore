@@ -12,5 +12,7 @@ java/hibernate.cfg.xml
 src/java/hibernate.cfg.xml
 Twittbook/src/java/hibernate.cfg.xml
 Twittbook/Twittbook/src/java/hibernate.cfg.xml
+Twittbook/nbproject/private*
+Twittbook/nbproject/private/private.properties
 .project
 .classpath
