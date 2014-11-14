@@ -8,7 +8,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import bo.Helper;
-import bo.TUser;
+import bo.User;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;

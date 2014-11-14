@@ -19,7 +19,7 @@ public class UserController {
     }
     
     public boolean login(String username, String password) {
-        TUser user = null;
+        User user = null;
 
         try {
           //  org.hibernate.Transaction tx = session.beginTransaction();

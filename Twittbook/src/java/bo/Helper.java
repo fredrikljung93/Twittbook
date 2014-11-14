@@ -21,7 +21,7 @@ public class Helper {
     }
 
     public List getAllUsers() {
-        List<TUser> list = null;
+        List<User> list = null;
 
         return list;
     }
@@ -31,7 +31,7 @@ public class Helper {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
-        result = session.createQuery("from TUser as user where user.username='" + username + "' and user.password ='" + password + "'").list();
+        result = session.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").list();
         if (result.size() > 0) {
             return true;
         } else {
