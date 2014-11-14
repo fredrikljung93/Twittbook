@@ -39,10 +39,15 @@ public class LoginBean implements Serializable{
         return password;
     }
     
-    public String Login(){
+    public String Login() throws Exception{
         if(username.equals("kalle")&&password.equals("hemligt")){
             System.out.println("Success!");
             return "success";
+        }
+        else if(username.equals("error")){
+            Exception up = new Exception("You wanted this, god damn it!");
+            
+            throw up;
         }
         else{
             return "failure";
