@@ -25,20 +25,18 @@ public class Helper {
         return list;
     }
 
-    public static TUser getUser(String username, String password) {
-        TUser user;
+    public static boolean loginUser(String username, String password) {
         List result;
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
         result = session.createQuery("from TUser as user where user.username='" + username + "' and user.password ='" + password + "'").list();
         if (result.size() > 0) {
-            user = (TUser) result.get(0);
-        }else{
-            user = null;
+            return true;
+        } else {
+            return false;
         }
 
-        return user;
     }
 
 }

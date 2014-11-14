@@ -49,11 +49,8 @@ public class LoginBean implements Serializable {
     }
 
     public String Login() {
-        TUser user;
 
-        user = Helper.getUser(username, password);
-
-        if (user != null) {
+        if (Helper.loginUser(username,password)) {
             return "success";
         } else {
             return "failure";
