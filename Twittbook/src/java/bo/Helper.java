@@ -46,10 +46,10 @@ public class Helper {
         session.beginTransaction();
         Iterator result = session.createQuery("from TUser as user where user.username='" + username + "' and user.password ='" + password + "'").list().iterator();
 
-        TUser user = new TUser(username, password);
-        TUser tmp;
+        User user = new User(username, password);
+        User tmp;
        while(result.hasNext()){
-           tmp= (TUser) result.next();
+           tmp= (User) result.next();
            
            if(tmp.getUsername().equals(user.getUsername())){
                return false;
