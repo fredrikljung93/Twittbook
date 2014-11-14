@@ -55,15 +55,16 @@ public class LoginBean implements Serializable {
         } else {
             return "failure";
         }
-
-
-        /*  if(username.equals("kalle")&&password.equals("hemligt")){
-         System.out.println("Success!");
-         return "success";
-         }
-         else{
-         return "failure";
-         }*/
     }
+    
+     public String Register() {
+
+        if (Helper.registerUser(username,password)) {
+            return "success";
+        } else {
+            return "failure";
+        }
+    }
+
 
 }

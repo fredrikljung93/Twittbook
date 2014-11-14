@@ -5,6 +5,7 @@
  */
 package bo;
 
+import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -37,6 +38,29 @@ public class Helper {
             return false;
         }
 
+    }
+
+    public static boolean registerUser(String username, String password) {
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+        Iterator result = session.createQuery("from TUser as user where user.username='" + username + "' and user.password ='" + password + "'").list().iterator();
+
+        TUser user = new TUser(username, password);
+        TUser tmp;
+       while(result.hasNext()){
+           tmp= (TUser) result.next();
+           
+           if(tmp.getUsername().equals(user.getUsername())){
+               return false;
+           }
+           
+       }
+       //TODO: Create tuple with new user data.
+       session.save(user);
+       session.getTransaction().commit();
+       
+       return true;
     }
 
 }
