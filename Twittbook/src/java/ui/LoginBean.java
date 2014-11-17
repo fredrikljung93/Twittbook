@@ -53,8 +53,9 @@ public class LoginBean implements Serializable {
     
     public String Login() {
 
-        if (Helper.loginUser(username, password)) {
-            PublicUser user = new PublicUser(1337, "Ljung");
+        PublicUser user = Helper.loginUser(username, password);
+        if (user != null) {
+            
             FacesContext context = FacesContext.getCurrentInstance();
             context.getExternalContext().getSessionMap().put("user", user);
             return "success";

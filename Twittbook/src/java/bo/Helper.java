@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 
@@ -134,9 +133,10 @@ public class Helper {
                 buildSessionFactory()).openSession();
         session.beginTransaction();
         result = session.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").list();
-        
+
         if (result.size() > 0) {
-            PublicUser user = (PublicUser) result.get(0);
+            User tUser = (User) result.get(0);
+            PublicUser user = new PublicUser(tUser.getId(), tUser.getUsername());
             return user;
         } else {
             return null;
@@ -144,7 +144,7 @@ public class Helper {
 
     }
 
-    public static boolean registerUser(String username, String password) {
+   /* public static PublicUser registerUser(String username, String password) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
@@ -156,22 +156,23 @@ public class Helper {
             tmp = (User) result.next();
 
             if (tmp.getUsername().equals(user.getUsername())) {
-                return false;
+                return null;
             }
 
         }
         //TODO: Create tuple with new user data.
         session.save(user);
         session.getTransaction().commit();
+        
 
-        return true;
-    }
+        return getPublicUser(user.getUsername());
+    }*/
 
     public boolean sendPrivateMessage(int senderId, int receiverId, Date date, String message) {
         try {
-            TMessage msg;
+            Message msg;
 
-            msg = new TMessage(senderId, receiverId, date, message);
+            msg = new Message(senderId, receiverId, date, message);
 
             Session session = (new Configuration().configure().
                     buildSessionFactory()).openSession();
@@ -214,11 +215,11 @@ public class Helper {
         Iterator result = session.createQuery("from TMessage as message where message.receiver ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
-        ArrayList<TMessage> list = new ArrayList<>();
+        ArrayList<Message> list = new ArrayList<>();
 
-        TMessage message;
+        Message message;
         while (result.hasNext()) {
-            message = (TMessage) result.next();
+            message = (Message) result.next();
             list.add(message);
 
         }
@@ -233,11 +234,11 @@ public class Helper {
         Iterator result = session.createQuery("from TMessage as message where message.sender ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
-        ArrayList<TMessage> list = new ArrayList<>();
+        ArrayList<Message> list = new ArrayList<>();
 
-        TMessage message;
+        Message message;
         while (result.hasNext()) {
-            message = (TMessage) result.next();
+            message = (Message) result.next();
             list.add(message);
 
         }
@@ -252,11 +253,11 @@ public class Helper {
         Iterator result = session.createQuery("from Post as post where post.user ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
-        ArrayList<TMessage> list = new ArrayList<>();
+        ArrayList<Message> list = new ArrayList<>();
 
-        TMessage message;
+        Message message;
         while (result.hasNext()) {
-            message = (TMessage) result.next();
+            message = (Message) result.next();
             list.add(message);
 
         }
