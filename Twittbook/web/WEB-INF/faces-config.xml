@@ -7,16 +7,36 @@
     version="2.0">
  
     <navigation-rule>
-	<from-view-id>login.xhtml</from-view-id>
-	<navigation-case>
-		<from-action>#{LoginBean.Login}</from-action>
-		<from-outcome>success</from-outcome>
-		<to-view-id>success.xhtml</to-view-id>
-	</navigation-case>
-	<navigation-case>
-		<from-action>#{LoginBean.Login}</from-action>
-		<from-outcome>failure</from-outcome>
-		<to-view-id>failure.xhtml</to-view-id>
-	</navigation-case>
+        <from-view-id>login.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{LoginBean.Login}</from-action>
+            <from-outcome>success</from-outcome>
+            <to-view-id>success.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{LoginBean.Login}</from-action>
+            <from-outcome>failure</from-outcome>
+            <to-view-id>failure.xhtml</to-view-id>
+        </navigation-case>
     </navigation-rule>	
+    
+    <navigation-rule>
+        <from-view-id>register.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{RegisterBean.Register}</from-action>
+            <from-outcome>success</from-outcome>
+            <to-view-id>success.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{RegisterBean.Register}</from-action>
+            <from-outcome>unmatchedpasswords</from-outcome>
+            <to-view-id>register.xhtml?code=unmatchedpasswords</to-view-id>
+            <redirect>
+                <view-param>
+                    <name>code</name>
+                    <value>unmatchedpasswords</value>
+                </view-param>
+            </redirect>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>
