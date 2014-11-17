@@ -17,9 +17,96 @@ import org.hibernate.cfg.Configuration;
  *
  * @author jonas_000
  */
+
+
+//TODO: Make querys that returns 1 unique result when possible / best.
 public class Helper {
 
     public Helper() {
+    }
+
+    public User getTUser(String username) {
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+        Iterator result = session.createQuery("from TUser as user where user.username='" + username + "'").list().iterator();
+
+        User user;
+        while (result.hasNext()) {
+            user = (User) result.next();
+
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+
+        }
+
+        return null;
+    }
+
+    public User getTUser(int id) {
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+        Iterator result = session.createQuery("from TUser as user where user.Id='" + id + "'").list().iterator();
+
+        User user;
+        while (result.hasNext()) {
+            user = (User) result.next();
+
+            if (user.getId() == id) {
+                return user;
+            }
+
+        }
+
+        return null;
+    }
+
+    public PublicUser getPublicUser(String username) {
+        PublicUser user;
+
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+
+        Iterator result = session.createQuery("from TUser").list().iterator();
+        session.getTransaction().commit();
+
+        User tmpUser;
+        while (result.hasNext()) {
+            tmpUser = (User) result.next();
+
+            if (tmpUser.getUsername().equals(username)) {
+                user = new PublicUser(tmpUser.getId(), tmpUser.getUsername());
+                return user;
+            }
+        }
+
+        return null;
+    }
+
+    public PublicUser getPublicUser(int id) {
+        PublicUser user;
+
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+
+        Iterator result = session.createQuery("from TUser").list().iterator();
+        session.getTransaction().commit();
+
+        User tmpUser;
+        while (result.hasNext()) {
+            tmpUser = (User) result.next();
+
+            if (tmpUser.getId() == id) {
+                user = new PublicUser(tmpUser.getId(), tmpUser.getUsername());
+                return user;
+            }
+        }
+
+        return null;
     }
 
     public List getAllUsers() {
@@ -118,5 +205,64 @@ public class Helper {
         }
 
     }
+    
+    public List getMyInbox(int id) {
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+
+        Iterator result = session.createQuery("from TMessage as message where message.receiver ='"+id+"'").list().iterator();
+        session.getTransaction().commit();
+
+        ArrayList<TMessage> list = new ArrayList<>();
+        
+        TMessage message;
+        while (result.hasNext()) {
+            message = (TMessage) result.next();
+            list.add(message);
+
+        }
+        return list;
+    }
+    
+    public List getMySentMessages(int id) {
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+
+        Iterator result = session.createQuery("from TMessage as message where message.sender ='"+id+"'").list().iterator();
+        session.getTransaction().commit();
+
+        ArrayList<TMessage> list = new ArrayList<>();
+        
+        TMessage message;
+        while (result.hasNext()) {
+            message = (TMessage) result.next();
+            list.add(message);
+
+        }
+        return list;
+    }
+    
+    public List getFeed(int id) {
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+
+        Iterator result = session.createQuery("from Post as post where post.user ='"+id+"'").list().iterator();
+        session.getTransaction().commit();
+
+        ArrayList<TMessage> list = new ArrayList<>();
+        
+        TMessage message;
+        while (result.hasNext()) {
+            message = (TMessage) result.next();
+            list.add(message);
+
+        }
+        return list;
+    }
+    
+    
 
 }
