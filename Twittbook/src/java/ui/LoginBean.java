@@ -8,8 +8,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import bo.Helper;
+import bo.PublicUser;
 import bo.User;
 import java.util.List;
+import javax.faces.context.FacesContext;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
@@ -48,18 +50,13 @@ public class LoginBean implements Serializable {
         return password;
     }
 
+    
     public String Login() {
 
-        if (Helper.loginUser(username,password)) {
-            return "success";
-        } else {
-            return "failure";
-        }
-    }
-    
-     public String Register() {
-
-        if (Helper.registerUser(username,password)) {
+        if (Helper.loginUser(username, password)) {
+            PublicUser user = new PublicUser(1337, "Ljung");
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.getExternalContext().getSessionMap().put("user", user);
             return "success";
         } else {
             return "failure";
