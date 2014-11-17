@@ -17,8 +17,6 @@ import org.hibernate.cfg.Configuration;
  *
  * @author jonas_000
  */
-
-
 //TODO: Make querys that returns 1 unique result when possible / best.
 public class Helper {
 
@@ -130,16 +128,18 @@ public class Helper {
         return list;
     }
 
-    public static boolean loginUser(String username, String password) {
+    public static PublicUser loginUser(String username, String password) {
         List result;
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
         result = session.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").list();
+        
         if (result.size() > 0) {
-            return true;
+            PublicUser user = (PublicUser) result.get(0);
+            return user;
         } else {
-            return false;
+            return null;
         }
 
     }
@@ -167,11 +167,11 @@ public class Helper {
         return true;
     }
 
-    public boolean sendPrivateMessage(int sender, int receiver, Date date, String message) {
+    public boolean sendPrivateMessage(int senderId, int receiverId, Date date, String message) {
         try {
             TMessage msg;
 
-            msg = new TMessage(sender, receiver, date, message);
+            msg = new TMessage(senderId, receiverId, date, message);
 
             Session session = (new Configuration().configure().
                     buildSessionFactory()).openSession();
@@ -187,11 +187,11 @@ public class Helper {
 
     }
 
-    public boolean postMessage(String user, Date date, String message) {
+    public boolean postMessage(String username, Date date, String message) {
 
         try {
             Post post;
-            post = new Post(user, date, message);
+            post = new Post(username, date, message);
 
             Session session = (new Configuration().configure().
                     buildSessionFactory()).openSession();
@@ -205,17 +205,17 @@ public class Helper {
         }
 
     }
-    
-    public List getMyInbox(int id) {
+
+    public List getMyInbox(int userId) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
-        Iterator result = session.createQuery("from TMessage as message where message.receiver ='"+id+"'").list().iterator();
+        Iterator result = session.createQuery("from TMessage as message where message.receiver ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
         ArrayList<TMessage> list = new ArrayList<>();
-        
+
         TMessage message;
         while (result.hasNext()) {
             message = (TMessage) result.next();
@@ -224,17 +224,17 @@ public class Helper {
         }
         return list;
     }
-    
-    public List getMySentMessages(int id) {
+
+    public List getMySentMessages(int userId) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
-        Iterator result = session.createQuery("from TMessage as message where message.sender ='"+id+"'").list().iterator();
+        Iterator result = session.createQuery("from TMessage as message where message.sender ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
         ArrayList<TMessage> list = new ArrayList<>();
-        
+
         TMessage message;
         while (result.hasNext()) {
             message = (TMessage) result.next();
@@ -243,17 +243,17 @@ public class Helper {
         }
         return list;
     }
-    
-    public List getFeed(int id) {
+
+    public List getFeed(int userId) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
-        Iterator result = session.createQuery("from Post as post where post.user ='"+id+"'").list().iterator();
+        Iterator result = session.createQuery("from Post as post where post.user ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
         ArrayList<TMessage> list = new ArrayList<>();
-        
+
         TMessage message;
         while (result.hasNext()) {
             message = (TMessage) result.next();
@@ -262,7 +262,5 @@ public class Helper {
         }
         return list;
     }
-    
-    
 
 }
