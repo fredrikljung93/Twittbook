@@ -5,6 +5,7 @@
  */
 package bo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -22,8 +23,23 @@ public class Helper {
     }
 
     public List getAllUsers() {
-        List<User> list = null;
+        Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
 
+        Iterator result = session.createQuery("from TUser").list().iterator();
+        session.getTransaction().commit();
+
+        ArrayList<PublicUser> list = new ArrayList<>();
+        User user;
+        PublicUser pu;
+        while (result.hasNext()) {
+            user = (User) result.next();
+            pu = new PublicUser(user.getId(), user.getUsername());
+
+            list.add(pu);
+
+        }
         return list;
     }
 
