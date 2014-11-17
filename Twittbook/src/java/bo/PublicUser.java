@@ -10,8 +10,8 @@ package bo;
  * @author jonas_000
  */
 public class PublicUser {
-    int id;
-    String username;
+    private int id;
+    private String username;
     
     public PublicUser(int id, String username){
         this.id=id;
@@ -32,10 +32,5 @@ public class PublicUser {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-    
-    @Override
-    public String toString(){
-        return username;
     }
 }
