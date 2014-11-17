@@ -22,11 +22,11 @@ public class Helper {
     public Helper() {
     }
 
-    public User getTUser(String username) {
+    public User getUser(String username) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
-        Iterator result = session.createQuery("from TUser as user where user.username='" + username + "'").list().iterator();
+        Iterator result = session.createQuery("from User as user where user.username='" + username + "'").list().iterator();
 
         User user;
         while (result.hasNext()) {
@@ -41,11 +41,11 @@ public class Helper {
         return null;
     }
 
-    public User getTUser(int id) {
+    public User getUser(int id) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
-        Iterator result = session.createQuery("from TUser as user where user.Id='" + id + "'").list().iterator();
+        Iterator result = session.createQuery("from User as user where user.Id='" + id + "'").list().iterator();
 
         User user;
         while (result.hasNext()) {
@@ -60,14 +60,14 @@ public class Helper {
         return null;
     }
 
-    public PublicUser getPublicUser(String username) {
+    public static PublicUser getPublicUser(String username) {
         PublicUser user;
 
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
-        Iterator result = session.createQuery("from TUser").list().iterator();
+        Iterator result = session.createQuery("from User").list().iterator();
         session.getTransaction().commit();
 
         User tmpUser;
@@ -83,14 +83,14 @@ public class Helper {
         return null;
     }
 
-    public PublicUser getPublicUser(int id) {
+    public static PublicUser getPublicUser(int id) {
         PublicUser user;
 
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
-        Iterator result = session.createQuery("from TUser").list().iterator();
+        Iterator result = session.createQuery("from User").list().iterator();
         session.getTransaction().commit();
 
         User tmpUser;
@@ -106,12 +106,12 @@ public class Helper {
         return null;
     }
 
-    public List getAllUsers() {
+    public static List getAllUsers() {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
-        Iterator result = session.createQuery("from TUser").list().iterator();
+        Iterator result = session.createQuery("from User").list().iterator();
         session.getTransaction().commit();
 
         ArrayList<PublicUser> list = new ArrayList<>();
@@ -144,11 +144,11 @@ public class Helper {
 
     }
 
-   /* public static PublicUser registerUser(String username, String password) {
+    public static PublicUser registerUser(String username, String password) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
-        Iterator result = session.createQuery("from TUser as user where user.username='" + username + "' and user.password ='" + password + "'").list().iterator();
+        Iterator result = session.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").list().iterator();
 
         User user = new User(username, password);
         User tmp;
@@ -160,13 +160,12 @@ public class Helper {
             }
 
         }
-        //TODO: Create tuple with new user data.
+
         session.save(user);
         session.getTransaction().commit();
-        
 
         return getPublicUser(user.getUsername());
-    }*/
+    }
 
     public boolean sendPrivateMessage(int senderId, int receiverId, Date date, String message) {
         try {
@@ -212,7 +211,7 @@ public class Helper {
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
-        Iterator result = session.createQuery("from TMessage as message where message.receiver ='" + userId + "'").list().iterator();
+        Iterator result = session.createQuery("from Message as message where message.receiver ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
         ArrayList<Message> list = new ArrayList<>();
@@ -231,7 +230,7 @@ public class Helper {
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
-        Iterator result = session.createQuery("from TMessage as message where message.sender ='" + userId + "'").list().iterator();
+        Iterator result = session.createQuery("from Message as message where message.sender ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
         ArrayList<Message> list = new ArrayList<>();
