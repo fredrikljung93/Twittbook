@@ -5,6 +5,7 @@
  */
 package bo;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Query;
@@ -48,19 +49,58 @@ public class Helper {
 
         User user = new User(username, password);
         User tmp;
-       while(result.hasNext()){
-           tmp= (User) result.next();
-           
-           if(tmp.getUsername().equals(user.getUsername())){
-               return false;
-           }
-           
-       }
-       //TODO: Create tuple with new user data.
-       session.save(user);
-       session.getTransaction().commit();
-       
-       return true;
+        while (result.hasNext()) {
+            tmp = (User) result.next();
+
+            if (tmp.getUsername().equals(user.getUsername())) {
+                return false;
+            }
+
+        }
+        //TODO: Create tuple with new user data.
+        session.save(user);
+        session.getTransaction().commit();
+
+        return true;
+    }
+
+    public boolean sendPrivateMessage(int sender, int receiver, Date date, String message) {
+        try {
+            TMessage msg;
+
+            msg = new TMessage(sender, receiver, date, message);
+
+            Session session = (new Configuration().configure().
+                    buildSessionFactory()).openSession();
+            session.beginTransaction();
+
+            session.save(msg);
+            session.getTransaction().commit();
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
+    public boolean postMessage(String user, Date date, String message) {
+
+        try {
+            Post post;
+            post = new Post(user, date, message);
+
+            Session session = (new Configuration().configure().
+                    buildSessionFactory()).openSession();
+            session.beginTransaction();
+
+            session.save(post);
+            session.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
 }
