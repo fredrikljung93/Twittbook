@@ -9,7 +9,9 @@ import bo.Helper;
 import bo.User;
 import static com.sun.faces.facelets.util.Path.context;
 import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
@@ -72,6 +74,10 @@ public class PostBean {
         System.out.println(user.getUsername()+ ": "+message);
         Helper.postMessage(user.getId(), date, message);
         return "success";
+    }
+    
+    public static List<PostBean> getPostsFromUser(int userid){
+       return Helper.getFeed(userid);
     }
     
 }
