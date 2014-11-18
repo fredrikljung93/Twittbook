@@ -7,6 +7,8 @@
     <h:body>
       <h:link value="Home" outcome="index.xhtml" />
       |
+      <h:link value="My profile" outcome="profile.xhtml?id=#{sessionScope.user.id}" />
+      |
       <h:link value="Users" outcome="allusers.xhtml" />
            |
       <h:link value="Create post" outcome="newpost.xhtml" />
