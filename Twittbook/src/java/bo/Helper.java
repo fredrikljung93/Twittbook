@@ -23,7 +23,7 @@ public class Helper {
     public Helper() {
     }
 
-    public User getUser(String username) {
+    public static User getUser(String username) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
@@ -42,7 +42,7 @@ public class Helper {
         return null;
     }
 
-    public User getUser(int id) {
+    public static User getUser(int id) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
@@ -168,7 +168,7 @@ public class Helper {
         return getPublicUser(user.getUsername());
     }
 
-    public boolean sendPrivateMessage(int senderId, int receiverId, Date date, String message) {
+    public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String message) {
         try {
             Message msg;
 
@@ -188,7 +188,7 @@ public class Helper {
 
     }
 
-    public boolean postMessage(String username, Date date, String message) {
+    public static boolean postMessage(String username, Date date, String message) {
 
         try {
             Post post;
@@ -207,7 +207,7 @@ public class Helper {
 
     }
 
-    public List getMyInbox(int userId) {
+    public static List getMyInbox(int userId) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
@@ -226,7 +226,7 @@ public class Helper {
         return list;
     }
 
-    public List getMySentMessages(int userId) {
+    public static List getMySentMessages(int userId) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
@@ -245,7 +245,7 @@ public class Helper {
         return list;
     }
 
-    public List getFeed(int userId) {
+    public static List getFeed(int userId) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
