@@ -12,5 +12,10 @@
       <h:link value="Users" outcome="allusers.xhtml" />
            |
       <h:link value="Create post" outcome="newpost.xhtml" />
+      |
+         <h:form id="logout-form">
+             <h:commandButton id="button" value="Log out" action="#{LoginBean.Logout()}"/>
+            <br/>
+        </h:form>
     </h:body>
 </html>

@@ -10,7 +10,10 @@ import javax.faces.bean.SessionScoped;
 import bo.Helper;
 import ui.UserBean;
 import bo.User;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -62,6 +65,11 @@ public class LoginBean implements Serializable {
         } else {
             return "failure";
         }
+    }
+    
+       public String Logout() {
+          FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+          return "logout";
     }
 
 
