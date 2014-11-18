@@ -8,7 +8,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import bo.Helper;
-import bo.PublicUser;
+import ui.UserBean;
 import bo.User;
 import java.util.List;
 import javax.faces.context.FacesContext;
@@ -53,7 +53,7 @@ public class LoginBean implements Serializable {
     
     public String Login() {
 
-        PublicUser user = Helper.loginUser(username, password);
+        UserBean user = Helper.loginUser(username, password);
         if (user != null) {
             
             FacesContext context = FacesContext.getCurrentInstance();

@@ -6,7 +6,6 @@
 package ui;
 
 import bo.Helper;
-import bo.PublicUser;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
@@ -66,7 +65,7 @@ public class RegisterBean {
         if (!password.equals(repeatedPassword)) {
             return "unmatchedpasswords";
         }
-        PublicUser user = Helper.registerUser(username, password);
+        UserBean user = Helper.registerUser(username, password);
 
         if (user != null) {
             return "success?faces-redirect=true";

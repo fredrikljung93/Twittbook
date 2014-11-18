@@ -5,6 +5,7 @@
  */
 package bo;
 
+import ui.UserBean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -60,8 +61,8 @@ public class Helper {
         return null;
     }
 
-    public static PublicUser getPublicUser(String username) {
-        PublicUser user;
+    public static UserBean getPublicUser(String username) {
+        UserBean user;
 
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
@@ -75,7 +76,7 @@ public class Helper {
             tmpUser = (User) result.next();
 
             if (tmpUser.getUsername().equals(username)) {
-                user = new PublicUser(tmpUser.getId(), tmpUser.getUsername());
+                user = new UserBean(tmpUser.getId(), tmpUser.getUsername());
                 return user;
             }
         }
@@ -83,8 +84,8 @@ public class Helper {
         return null;
     }
 
-    public static PublicUser getPublicUser(int id) {
-        PublicUser user;
+    public static UserBean getPublicUser(int id) {
+        UserBean user;
 
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
@@ -98,7 +99,7 @@ public class Helper {
             tmpUser = (User) result.next();
 
             if (tmpUser.getId() == id) {
-                user = new PublicUser(tmpUser.getId(), tmpUser.getUsername());
+                user = new UserBean(tmpUser.getId(), tmpUser.getUsername());
                 return user;
             }
         }
@@ -114,12 +115,12 @@ public class Helper {
         Iterator result = session.createQuery("from User").list().iterator();
         session.getTransaction().commit();
 
-        ArrayList<PublicUser> list = new ArrayList<>();
+        ArrayList<UserBean> list = new ArrayList<>();
         User user;
-        PublicUser pu;
+        UserBean pu;
         while (result.hasNext()) {
             user = (User) result.next();
-            pu = new PublicUser(user.getId(), user.getUsername());
+            pu = new UserBean(user.getId(), user.getUsername());
 
             list.add(pu);
 
@@ -127,7 +128,7 @@ public class Helper {
         return list;
     }
 
-    public static PublicUser loginUser(String username, String password) {
+    public static UserBean loginUser(String username, String password) {
         List result;
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
@@ -136,7 +137,7 @@ public class Helper {
 
         if (result.size() > 0) {
             User tUser = (User) result.get(0);
-            PublicUser user = new PublicUser(tUser.getId(), tUser.getUsername());
+            UserBean user = new UserBean(tUser.getId(), tUser.getUsername());
             return user;
         } else {
             return null;
@@ -144,7 +145,7 @@ public class Helper {
 
     }
 
-    public static PublicUser registerUser(String username, String password) {
+    public static UserBean registerUser(String username, String password) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
