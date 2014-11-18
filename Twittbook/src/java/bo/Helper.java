@@ -253,12 +253,12 @@ public class Helper {
         Iterator result = session.createQuery("from Post as post where post.user ='" + userId + "'").list().iterator();
         session.getTransaction().commit();
 
-        ArrayList<Message> list = new ArrayList<>();
+        ArrayList<Post> list = new ArrayList<>();
 
-        Message message;
+        Post post;
         while (result.hasNext()) {
-            message = (Message) result.next();
-            list.add(message);
+            post = (Post) result.next();
+            list.add(post);
 
         }
         return list;
