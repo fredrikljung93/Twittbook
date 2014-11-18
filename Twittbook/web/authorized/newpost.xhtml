@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "htth://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"     
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:head>
+        <title>Twittbook</title>
+    </h:head>
+    <h:body>
+        <h3>Register new user</h3>
+        <h:form id="login-form">
+            <h:outputText value="Username:"/>
+            <h:inputText value="#{RegisterBean.username}" id="username"/>
+            <br/>
+            <h:outputText value="Password:"/>
+            <h:inputSecret value="#{RegisterBean.password}" id="password"/>
+            <br/>
+            <h:outputText value="Repeat Password:"/>
+            <h:inputSecret value="#{RegisterBean.repeatedPassword}" id="repeatpassword"/>
+            <br/>
+            <h:commandButton id="button" value="Register" action="#{RegisterBean.Register}"/>
+            <br/>
+        </h:form>
+        <h:panelGroup rendered="#{'unmatchedpasswords' eq param['code']}">
+           Passwords do not match
+        </h:panelGroup>
+    </h:body>
+</html>
