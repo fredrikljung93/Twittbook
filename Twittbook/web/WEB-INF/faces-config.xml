@@ -11,7 +11,7 @@
         <navigation-case>
             <from-action>#{LoginBean.Login}</from-action>
             <from-outcome>success</from-outcome>
-            <to-view-id>/authorized/welcome.xhtml</to-view-id>
+            <to-view-id>/authorized/index.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-action>#{LoginBean.Login}</from-action>

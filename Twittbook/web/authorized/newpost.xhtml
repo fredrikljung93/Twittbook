@@ -3,28 +3,26 @@
     "htth://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:f="http://java.sun.com/jsf/core"     
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <h:head>
         <title>Twittbook</title>
     </h:head>
     <h:body>
-        <h3>Register new user</h3>
+          <div id="header">
+            <ui:insert name="header" >
+                <ui:include src="/authorized/menu.xhtml" />
+            </ui:insert>
+        </div>
+        <h3>Write new post</h3>
         <h:form id="login-form">
-            <h:outputText value="Username:"/>
-            <h:inputText value="#{RegisterBean.username}" id="username"/>
+            <h:outputText value="Message:"/>
+            <h:inputText value="#{post.message}" id="message"/>
             <br/>
-            <h:outputText value="Password:"/>
-            <h:inputSecret value="#{RegisterBean.password}" id="password"/>
-            <br/>
-            <h:outputText value="Repeat Password:"/>
-            <h:inputSecret value="#{RegisterBean.repeatedPassword}" id="repeatpassword"/>
-            <br/>
-            <h:commandButton id="button" value="Register" action="#{RegisterBean.Register}"/>
+                        <br/>
+            <h:commandButton id="button" value="Submit" action="#{post.CreatePost}"/>
             <br/>
         </h:form>
-        <h:panelGroup rendered="#{'unmatchedpasswords' eq param['code']}">
-           Passwords do not match
-        </h:panelGroup>
     </h:body>
 </html>

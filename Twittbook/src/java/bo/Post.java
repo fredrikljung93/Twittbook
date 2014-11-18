@@ -11,7 +11,7 @@ public class Post  implements java.io.Serializable {
 
 
      private Integer id;
-     private String user;
+     private Integer user;
      private Date date;
      private String message;
 
@@ -19,11 +19,11 @@ public class Post  implements java.io.Serializable {
     }
 
 	
-    public Post(String user, Date date) {
+    public Post(Integer user, Date date) {
         this.user = user;
         this.date = date;
     }
-    public Post(String user, Date date, String message) {
+    public Post(Integer user, Date date, String message) {
        this.user = user;
        this.date = date;
        this.message = message;
@@ -36,11 +36,11 @@ public class Post  implements java.io.Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-    public String getUser() {
+    public Integer getUser() {
         return this.user;
     }
     
-    public void setUser(String user) {
+    public void setUser(Integer user) {
         this.user = user;
     }
     public Date getDate() {

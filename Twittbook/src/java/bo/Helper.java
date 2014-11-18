@@ -188,7 +188,7 @@ public class Helper {
 
     }
 
-    public static boolean postMessage(String username, Date date, String message) {
+    public static boolean postMessage(Integer username, Date date, String message) {
 
         try {
             Post post;
