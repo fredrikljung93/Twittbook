@@ -18,3 +18,9 @@ Twittbook/nbproject/private/private.properties
 .classpath
 /Twittbook/build/
 /Twittbook/dist/
+*Persistance.xml
+Persistance.xml
+META-INF/Persistance.xml
+web/META-INF/Persistance.xml
+Twittbook/web/META-INF/Persistance.xml
+Twittbook/Twittbook/web/META-INF/Persistance.xml
