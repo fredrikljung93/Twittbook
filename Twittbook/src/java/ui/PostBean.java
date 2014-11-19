@@ -10,6 +10,7 @@ import bo.User;
 import static com.sun.faces.facelets.util.Path.context;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
@@ -24,7 +25,7 @@ import org.apache.derby.client.am.DateTime;
 @ManagedBean(name = "post")
 @RequestScoped
 public class PostBean {
-    
+
     private int id;
 
     public int getId() {
@@ -67,17 +68,19 @@ public class PostBean {
      */
     public PostBean() {
     }
-    
-    public String CreatePost(){
+
+    public String CreatePost() {
         date = new Date(System.currentTimeMillis());
         UserBean user = (UserBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
-        System.out.println(user.getUsername()+ ": "+message);
+        System.out.println(user.getUsername() + ": " + message);
         Helper.postMessage(user.getId(), date, message);
         return "success";
     }
-    
-    public static List<PostBean> getPostsFromUser(int userid){
-       return Helper.getFeed(userid);
+
+    public static List<PostBean> getPostsFromUser(int userid) {
+        List<PostBean> list = Helper.getFeed(userid);
+        Collections.reverse(list);
+        return list;
     }
-    
+
 }

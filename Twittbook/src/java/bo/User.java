@@ -42,6 +42,13 @@ public class User implements java.io.Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+    
+    @Override
+    public boolean equals(Object other){
+        User user=(User)other;
+        
+        return user.getId()==id;
+    }
 
 
 

@@ -27,7 +27,7 @@ public class Helper {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
-        Iterator result = session.createQuery("from User as user where user.username='" + username + "'").list().iterator();
+        Iterator result = session.createQuery("from User as user where user.username=" + username + "").list().iterator();
 
         User user;
         while (result.hasNext()) {
@@ -46,7 +46,7 @@ public class Helper {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
-        Iterator result = session.createQuery("from User as user where user.Id='" + id + "'").list().iterator();
+        Iterator result = session.createQuery("from User as user where user.id=" + id + "").list().iterator();
 
         User user;
         while (result.hasNext()) {
@@ -261,6 +261,28 @@ public class Helper {
             list.add(post);
 
         }
+        return list;
+    }
+    
+       public static List<User> getMessageSenders(int receiverid) {
+         Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+
+        Iterator result = session.createQuery("from Message as message where message.receiver ='" + receiverid + "'").list().iterator();
+        session.getTransaction().commit();
+
+        ArrayList<User> list = new ArrayList<>();
+
+        Message message;
+        while (result.hasNext()) {
+            message = (Message) result.next();
+            User sender = getUser(message.getSender());
+            if(!list.contains(sender)){
+                list.add(sender);
+            }
+        }
+        System.out.println("Helper getmessagesenders list size: "+list.size());
         return list;
     }
 
