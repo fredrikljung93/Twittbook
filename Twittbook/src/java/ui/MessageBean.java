@@ -22,11 +22,9 @@ import org.apache.derby.client.am.DateTime;
  *
  * @author Fredrik
  */
-@ManagedBean(name = "post")
+@ManagedBean(name = "message")
 @RequestScoped
-public class PostBean {
-
-    private int id;
+public class MessageBean {
 
     public int getId() {
         return id;
@@ -34,6 +32,14 @@ public class PostBean {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getSender() {
+        return sender;
+    }
+
+    public void setSender(int sender) {
+        this.sender = sender;
     }
 
     public String getMessage() {
@@ -51,36 +57,34 @@ public class PostBean {
     public void setDate(Date date) {
         this.date = date;
     }
-
-    public int getUser() {
-        return user;
-    }
-
-    public void setUser(int user) {
-        this.user = user;
-    }
+    
+    private int id;
+    private int sender;
+    private List<String> receivers;
     private String message;
+
+    public List<String> getReceiver() {
+        return receivers;
+    }
+
+    public void setReceiver(List<String> receivers) {
+        this.receivers = receivers;
+    }
     private Date date;
-    private int user;
 
     /**
-     * Creates a new instance of PostBean
+     * Creates a new instance of MessageBean
      */
-    public PostBean() {
+    public MessageBean() {
     }
 
-    public String CreatePost() {
+    public String CreateMessage() {
         date = new Date(System.currentTimeMillis());
-        UserBean user = (UserBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
-        System.out.println(user.getUsername() + ": " + message);
-        Helper.postMessage(user.getId(), date, message);
+        UserBean sender = (UserBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
+        for(String s:receivers){
+            Helper.sendPrivateMessage(sender.getId(), Integer.parseInt(s), date, message);
+        }
         return "success";
-    }
-
-    public static List<PostBean> getPostsFromUser(int userid) {
-        List<PostBean> list = Helper.getFeed(userid);
-        Collections.reverse(list);
-        return list;
     }
 
 }
