@@ -86,5 +86,20 @@ public class MessageBean {
         }
         return "success";
     }
+    
+    public List<UserBean> getMessageSenders(){
+        UserBean receiver = (UserBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
+        List<User> senders = Helper.getMessageSenders(receiver.getId());
+        
+        List<UserBean> beanSenders = new ArrayList<UserBean>();
+        
+        for(User u:senders){
+            UserBean bean = new UserBean();
+            bean.setId(u.getId());
+            bean.setUsername(u.getUsername());
+            beanSenders.add(bean);
+        }
+        return beanSenders;
+    }
 
 }

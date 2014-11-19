@@ -263,5 +263,27 @@ public class Helper {
         }
         return list;
     }
+    
+       public static List<User> getMessageSenders(int receiverid) {
+         Session session = (new Configuration().configure().
+                buildSessionFactory()).openSession();
+        session.beginTransaction();
+
+        Iterator result = session.createQuery("from Message as message where message.receiver ='" + receiverid + "'").list().iterator();
+        session.getTransaction().commit();
+
+        ArrayList<User> list = new ArrayList<>();
+
+        Message message;
+        while (result.hasNext()) {
+            message = (Message) result.next();
+            User sender = getUser(message.getSender());
+            if(!list.contains(sender)){
+                list.add(sender);
+            }
+        }
+        System.out.println("Helper getmessagesenders list size: "+list.size());
+        return list;
+    }
 
 }
