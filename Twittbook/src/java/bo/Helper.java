@@ -5,7 +5,6 @@
  */
 package bo;
 
-import ui.UserBean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -60,10 +59,7 @@ public class Helper {
 
         return null;
     }
-
-    public static UserBean getPublicUser(String username) {
-        UserBean user;
-
+    public static List<User> getAllUsers() {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
@@ -71,64 +67,16 @@ public class Helper {
         Iterator result = session.createQuery("from User").list().iterator();
         session.getTransaction().commit();
 
-        User tmpUser;
-        while (result.hasNext()) {
-            tmpUser = (User) result.next();
-
-            if (tmpUser.getUsername().equals(username)) {
-                user = new UserBean(tmpUser.getId(), tmpUser.getUsername());
-                return user;
-            }
-        }
-
-        return null;
-    }
-
-    public static UserBean getPublicUser(int id) {
-        UserBean user;
-
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-
-        Iterator result = session.createQuery("from User").list().iterator();
-        session.getTransaction().commit();
-
-        User tmpUser;
-        while (result.hasNext()) {
-            tmpUser = (User) result.next();
-
-            if (tmpUser.getId() == id) {
-                user = new UserBean(tmpUser.getId(), tmpUser.getUsername());
-                return user;
-            }
-        }
-
-        return null;
-    }
-
-    public static List getAllUsers() {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-
-        Iterator result = session.createQuery("from User").list().iterator();
-        session.getTransaction().commit();
-
-        ArrayList<UserBean> list = new ArrayList<>();
+        ArrayList<User> list = new ArrayList<>();
         User user;
-        UserBean pu;
         while (result.hasNext()) {
             user = (User) result.next();
-            pu = new UserBean(user.getId(), user.getUsername());
-
-            list.add(pu);
-
+            list.add(user);
         }
         return list;
     }
 
-    public static UserBean loginUser(String username, String password) {
+    public static User loginUser(String username, String password) {
         List result;
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
@@ -136,8 +84,7 @@ public class Helper {
         result = session.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").list();
 
         if (result.size() > 0) {
-            User tUser = (User) result.get(0);
-            UserBean user = new UserBean(tUser.getId(), tUser.getUsername());
+            User user = (User) result.get(0);
             return user;
         } else {
             return null;
@@ -145,7 +92,7 @@ public class Helper {
 
     }
 
-    public static UserBean registerUser(String username, String password) {
+    public static User registerUser(String username, String password) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
@@ -165,7 +112,7 @@ public class Helper {
         session.save(user);
         session.getTransaction().commit();
 
-        return getPublicUser(user.getUsername());
+        return getUser(username);
     }
 
     public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String message) {
@@ -188,7 +135,7 @@ public class Helper {
 
     }
 
-    public static boolean postMessage(Integer username, Date date, String message) {
+    public static boolean publishPost(Integer username, Date date, String message) {
 
         try {
             Post post;

@@ -66,7 +66,7 @@ public class RegisterBean {
         if (!password.equals(repeatedPassword)) {
             return "unmatchedpasswords";
         }
-        UserBean user = Helper.registerUser(username, password);
+        User user = Helper.registerUser(username, password);
 
         if (user != null) {
             return "success?faces-redirect=true";

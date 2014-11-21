@@ -16,7 +16,7 @@
             </ui:insert>
         </div>
         <h3>Profile</h3>
-        <h:outputText value="#{user.getUser(param['id']).getUsername()}" />
+        <h:outputText value="#{UserBean.getUser(param['id']).getUsername()}" />
         
         
           <h:dataTable value="#{post.getPostsFromUser(param['id'])}" var="p"
