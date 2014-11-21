@@ -5,12 +5,12 @@
  */
 package bo;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 
@@ -238,8 +238,18 @@ public class Helper {
 
     public static List<User> getAllUsers() {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
-        List<User> list = entityManager.createNamedQuery("User.findAll").getResultList();
-        
+        List<User> list;// = entityManager.createNamedQuery("User.findAll").getResultList();
+
+        Query q = entityManager.createQuery("from User u");
+        list = q.getResultList();
+        entityManager.close();
+        return list;
+
+    }
+
+    public static List emGetFeed(int userId) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        List<Post> list = entityManager.createNamedQuery("User.findAll").getResultList();
         entityManager.close();
         return list;
 
