@@ -65,7 +65,15 @@ public class PostBean {
     public PostBean() {
     }
 
-    public String CreatePost() {
+    public String createPost(String message) {
+        if(message==null){
+            System.out.println("Create post received null");
+            return "";
+        }
+         System.out.println("Create post received "+message);
+        if(message.equals("")){
+            return "";
+        }
         date = new Date(System.currentTimeMillis());
         User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
         System.out.println(user.getUsername() + ": " + message);

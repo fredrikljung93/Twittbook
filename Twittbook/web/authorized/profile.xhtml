@@ -16,6 +16,12 @@
             </ui:insert>
         </div>
         <h3>Profile</h3>
+        
+        <h:form rendered="#{sessionScope.user.id==param['id']}">
+            <h:outputText value="DIN PROFIL! :D"/>
+        </h:form>
+        
+        
         <h:outputText value="#{UserBean.getUser(param['id']).getUsername()}" />
         
         
