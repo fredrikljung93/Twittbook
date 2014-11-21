@@ -6,6 +6,7 @@
 package ui;
 
 import bo.Helper;
+import bo.User;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
@@ -72,6 +73,27 @@ public class RegisterBean {
         }
         return "failure?faces-redirect=true";
 
+    }
+    public String validateUsername(String params){
+        if(username==null){
+                  System.out.println("checkifusernamexists received null");  
+                  return "";
+        }
+                System.out.println("checkifusernamexists received "+username);
+        
+        if(username.equals("")){
+            return "";
+        }
+        if(username.length()<3){
+            return "Username needs to be at least three characters long";
+        }
+        User user = Helper.getUser(username);
+        if(user==null){
+            return "Username "+username+"  is available!";
+        }
+        else{
+            return "Username "+username+"  is already in use!";
+        }
     }
 
 }

@@ -27,7 +27,7 @@ public class Helper {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
-        Iterator result = session.createQuery("from User as user where user.username=" + username + "").list().iterator();
+        Iterator result = session.createQuery("from User as user where user.username='" + username + "'").list().iterator();
 
         User user;
         while (result.hasNext()) {

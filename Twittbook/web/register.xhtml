@@ -4,15 +4,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:f="http://java.sun.com/jsf/core"     
       xmlns:h="http://java.sun.com/jsf/html">
-
+   
     <h:head>
         <title>Twittbook</title>
     </h:head>
     <h:body>
         <h3>Register new user</h3>
-        <h:form id="login-form">
+        <h:form id="loginform">
             <h:outputText value="Username:"/>
-            <h:inputText value="#{RegisterBean.username}" id="username"/>
+            <h:inputText value="#{RegisterBean.username}" immediate="true" id="username" binding="#{input1}">
+            </h:inputText>
+            
+            <h:commandButton value="Check username">
+    		 <f:ajax render="output" execute="@form" />
+    	   </h:commandButton>
+            <h:outputText id="output" value="#{RegisterBean.validateUsername(input1.value)}" />
             <br/>
             <h:outputText value="Password:"/>
             <h:inputSecret value="#{RegisterBean.password}" id="password"/>
