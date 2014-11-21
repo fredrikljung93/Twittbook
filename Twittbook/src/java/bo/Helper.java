@@ -5,12 +5,16 @@
  */
 package bo;
 
+
 import ui.UserBean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import javax.persistence.EntityManager;
+import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 /**
@@ -263,9 +267,9 @@ public class Helper {
         }
         return list;
     }
-    
-       public static List<User> getMessageSenders(int receiverid) {
-         Session session = (new Configuration().configure().
+
+    public static List<User> getMessageSenders(int receiverid) {
+        Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
@@ -278,12 +282,33 @@ public class Helper {
         while (result.hasNext()) {
             message = (Message) result.next();
             User sender = getUser(message.getSender());
-            if(!list.contains(sender)){
+            if (!list.contains(sender)) {
                 list.add(sender);
             }
         }
-        System.out.println("Helper getmessagesenders list size: "+list.size());
+        System.out.println("Helper getmessagesenders list size: " + list.size());
         return list;
+    }
+
+    public static List<User> EMGetAllUsers() {
+
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+
+        //Query query = (Query) entityManager.createQuery("from User");
+      
+
+        //List<User> u = entityManager.createQuery("from User u").getResultList();
+        List<User> list = entityManager.createNamedQuery("User.findAll").getResultList();
+       // List<User> users = query.list();
+
+        return list;
+
+        /*  EntityManager entityManager = Persistence.createEntityManagerFactory("CustomerLibraryPU").createEntityManager();
+         Query query = entityManager.createNamedQuery("Customer.findAll");
+         List<Customer> resultList = query.getResultList();
+         for (Customer c : resultList) {
+         jTextArea1.append(c.getName() + " (" + c.getCity() + ")" + "\n");
+         }*/
     }
 
 }

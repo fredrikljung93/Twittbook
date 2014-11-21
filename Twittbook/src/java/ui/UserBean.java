@@ -9,6 +9,7 @@ import bo.Helper;
 import bo.User;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
@@ -18,7 +19,7 @@ import javax.faces.bean.SessionScoped;
  */
 @ManagedBean(name = "user")
 @SessionScoped
-public class UserBean implements Serializable{
+public class UserBean implements Serializable {
 
     private int id;
     private String username;
@@ -38,6 +39,7 @@ public class UserBean implements Serializable{
     public void setId(int id) {
         this.id = id;
     }
+
     public String getUsername() {
         return username;
     }
@@ -47,7 +49,18 @@ public class UserBean implements Serializable{
     }
 
     public static ArrayList<UserBean> getAllUsers() {
-        return (ArrayList<UserBean>) Helper.getAllUsers();
+
+        List<User> list = Helper.EMGetAllUsers();
+        ArrayList<UserBean> returnList = new ArrayList();
+      
+        UserBean user;
+        for (User u : list) {
+            user = new UserBean(u.getId(),u.getUsername());
+            returnList.add(user);
+
+        }
+        return returnList;
+        //return (ArrayList<UserBean>) Helper.getAllUsers();
     }
 
     public static UserBean getUser(int userid) {
