@@ -16,10 +16,10 @@
             </ui:insert>
         </div>
         <h3>Inbox</h3>
-      <h:outputText value="#{user.getUser(param['id']).getUsername()}" />
+      <h:outputText value="#{UserBean.getUser(param['id']).getUsername()}" />
         
         
-        <h:dataTable value="#{message.messageSenders}" var="u"
+        <h:dataTable value="#{MessageBean.messageSenders}" var="u"
     			styleClass="order-table"
     			headerClass="order-table-header"
     			rowClasses="order-table-odd-row,order-table-even-row"

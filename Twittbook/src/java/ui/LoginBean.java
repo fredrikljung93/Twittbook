@@ -6,18 +6,10 @@
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import bo.Helper;
-import ui.UserBean;
 import bo.User;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.cfg.Configuration;
 
 /**
  *
@@ -56,7 +48,7 @@ public class LoginBean implements Serializable {
     
     public String Login() {
 
-        UserBean user = Helper.loginUser(username, password);
+        User user = Helper.loginUser(username, password);
         if (user != null) {
             
             FacesContext context = FacesContext.getCurrentInstance();

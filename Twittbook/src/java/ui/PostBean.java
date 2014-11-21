@@ -7,22 +7,18 @@ package ui;
 
 import bo.Helper;
 import bo.User;
-import static com.sun.faces.facelets.util.Path.context;
-import java.math.MathContext;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
-import org.apache.derby.client.am.DateTime;
 
 /**
  *
  * @author Fredrik
  */
-@ManagedBean(name = "post")
+@ManagedBean(name = "PostBean")
 @RequestScoped
 public class PostBean {
 
@@ -69,11 +65,19 @@ public class PostBean {
     public PostBean() {
     }
 
-    public String CreatePost() {
+    public String createPost(String message) {
+        if(message==null){
+            System.out.println("Create post received null");
+            return "";
+        }
+         System.out.println("Create post received "+message);
+        if(message.equals("")){
+            return "";
+        }
         date = new Date(System.currentTimeMillis());
-        UserBean user = (UserBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
+        User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
         System.out.println(user.getUsername() + ": " + message);
-        Helper.postMessage(user.getId(), date, message);
+        Helper.publishPost(user.getId(), date, message);
         return "success";
     }
 

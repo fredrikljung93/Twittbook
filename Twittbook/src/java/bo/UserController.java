@@ -5,7 +5,6 @@
  */
 package bo;
 
-import org.hibernate.Query;
 
 /**
  *

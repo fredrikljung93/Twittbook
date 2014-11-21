@@ -16,10 +16,16 @@
             </ui:insert>
         </div>
         <h3>Profile</h3>
-        <h:outputText value="#{user.getUser(param['id']).getUsername()}" />
+        
+        <h:form rendered="#{sessionScope.user.id==param['id']}">
+            <h:outputText value="DIN PROFIL! :D"/>
+        </h:form>
         
         
-          <h:dataTable value="#{post.getPostsFromUser(param['id'])}" var="p"
+        <h:outputText value="#{UserBean.getUser(param['id']).getUsername()}" />
+        
+        
+          <h:dataTable value="#{PostBean.getPostsFromUser(param['id'])}" var="p"
     			styleClass="order-table"
     			headerClass="order-table-header"
     			rowClasses="order-table-odd-row,order-table-even-row"

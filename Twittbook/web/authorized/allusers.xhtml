@@ -15,7 +15,7 @@
                 <ui:include src="/authorized/menu.xhtml" />
             </ui:insert>
         </div>
-      <h:dataTable value="#{user.getAllUsers()}" var="c"
+        <h:dataTable value="#{UserBean.getAllUsers()}" var="c"
     			styleClass="order-table"
     			headerClass="order-table-header"
     			rowClasses="order-table-odd-row,order-table-even-row"

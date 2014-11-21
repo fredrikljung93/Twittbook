@@ -18,10 +18,10 @@
         <h3>Write new post</h3>
         <h:form id="login-form">
             <h:outputText value="Message:"/>
-            <h:inputText value="#{post.message}" id="message"/>
+            <h:inputText value="#{PostBean.message}" id="message"/>
             <br/>
                         <br/>
-            <h:commandButton id="button" value="Submit" action="#{post.CreatePost}"/>
+            <h:commandButton id="button" value="Submit" action="#{PostBean.createPost}"/>
             <br/>
         </h:form>
     </h:body>
