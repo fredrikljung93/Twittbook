@@ -17,7 +17,7 @@ import javax.faces.bean.SessionScoped;
  *
  * @author jonas_000
  */
-@ManagedBean(name = "user")
+@ManagedBean(name = "UserBean")
 @SessionScoped
 public class UserBean implements Serializable {
 
@@ -50,7 +50,7 @@ public class UserBean implements Serializable {
 
     public static ArrayList<UserBean> getAllUsers() {
 
-        List<User> list = Helper.EMGetAllUsers();
+        List<User> list = Helper.getAllUsers();
         ArrayList<UserBean> returnList = new ArrayList();
       
         UserBean user;
