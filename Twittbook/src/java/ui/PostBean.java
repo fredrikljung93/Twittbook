@@ -18,7 +18,7 @@ import javax.faces.context.FacesContext;
  *
  * @author Fredrik
  */
-@ManagedBean(name = "post")
+@ManagedBean(name = "PostBean")
 @RequestScoped
 public class PostBean {
 

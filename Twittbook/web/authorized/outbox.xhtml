@@ -16,10 +16,10 @@
             </ui:insert>
         </div>
         <h3>Outbox</h3>
-        <h:outputText value="#{user.getUser(param['id']).getUsername()}" />
+        <h:outputText value="#{UserBean.getUser(param['id']).getUsername()}" />
         
         
-          <h:dataTable value="#{post.getPostsFromUser(param['id'])}" var="p"
+          <h:dataTable value="#{PostBean.getPostsFromUser(param['id'])}" var="p"
     			styleClass="order-table"
     			headerClass="order-table-header"
     			rowClasses="order-table-odd-row,order-table-even-row"
