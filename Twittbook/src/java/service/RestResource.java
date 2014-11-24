@@ -59,4 +59,11 @@ public class RestResource {
     public String getHtml() {
         return Helper.getUser("fredrik").getPassword();
     }
+    
+     @GET
+     @Path("mess")
+    @Produces("text/plain")
+    public String getMess() {
+        return "yo!";
+    }
 }
