@@ -5,8 +5,6 @@
  */
 package ui;
 
-import bo.Helper;
-import bo.User;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
@@ -66,8 +64,7 @@ public class RegisterBean {
         if (!password.equals(repeatedPassword)) {
             return "unmatchedpasswords";
         }
-        User user = Helper.registerUser(username, password);
-
+        StoredUser user = new StoredUser();
         if (user != null) {
             return "success?faces-redirect=true";
         }
@@ -87,7 +84,7 @@ public class RegisterBean {
         if(username.length()<3){
             return "Username needs to be at least three characters long";
         }
-        User user = Helper.getUser(username);
+        StoredUser user = null;
         if(user==null){
             return "Username "+username+"  is available!";
         }

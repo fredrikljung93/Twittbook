@@ -1,3 +1,5 @@
+package ui;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -6,11 +8,7 @@
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import bo.Helper;
-import bo.User;
 import javax.faces.context.FacesContext;
-import org.hibernate.Session;
-
 /**
  *
  * @author Fredrik
@@ -21,7 +19,6 @@ public class LoginBean implements Serializable {
 
     private String username;
     private String password;
-    private Session session;
 
     /**
      * Creates a new instance of LoginBean
@@ -47,14 +44,14 @@ public class LoginBean implements Serializable {
 
     
     public String Login() {
-
-        User user = Helper.loginUser(username, password);
-        if (user != null) {
-            
+        StoredUser user = new StoredUser("kalle","password",1);
+        
+        if(username.equals("kalle")){
             FacesContext context = FacesContext.getCurrentInstance();
             context.getExternalContext().getSessionMap().put("user", user);
             return "success";
-        } else {
+        }
+        else{
             return "failure";
         }
     }

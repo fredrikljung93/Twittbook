@@ -4,15 +4,11 @@
  * and open the template in the editor.
  */
 package ui;
-
-import bo.Helper;
-import bo.User;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.context.FacesContext;
 
 /**
  *
@@ -74,16 +70,19 @@ public class PostBean {
         if(message.equals("")){
             return "";
         }
-        date = new Date(System.currentTimeMillis());
-        User user = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
-        System.out.println(user.getUsername() + ": " + message);
-        Helper.publishPost(user.getId(), date, message);
         return "success";
     }
 
     public static List<PostBean> getPostsFromUser(int userid) {
-        List<PostBean> list = Helper.getFeed(userid);
-        Collections.reverse(list);
+        List<PostBean> list = new ArrayList<PostBean>();
+        
+       PostBean post = new PostBean();
+       post.setUser(1);
+       post.setMessage("Ett meddelande");
+       post.setDate(new Date());
+       post.setId(1);
+       list.add(post);
+        
         return list;
     }
 

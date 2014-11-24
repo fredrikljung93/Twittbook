@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+    http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+ 
+    <navigation-rule>
+        <from-view-id>login.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{LoginBean.Login}</from-action>
+            <from-outcome>success</from-outcome>
+            <redirect/>
+            <to-view-id>/authorized/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{LoginBean.Login}</from-action>
+            <from-outcome>failure</from-outcome>
+            <to-view-id>failure.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>	
+    
+    <navigation-rule>
+        <from-view-id>register.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{RegisterBean.Register}</from-action>
+            <from-outcome>success</from-outcome>
+            <redirect/>
+            <to-view-id>success.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{RegisterBean.Register}</from-action>
+            <from-outcome>unmatchedpasswords</from-outcome>
+            <to-view-id>register.xhtml?code=unmatchedpasswords</to-view-id>
+            <redirect>
+                <view-param>
+                    <name>code</name>
+                    <value>unmatchedpasswords</value>
+                </view-param>
+            </redirect>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <navigation-case>
+             <from-view-id>*</from-view-id>
+            <from-action>#{LoginBean.Logout()}</from-action>
+            <from-outcome>logout</from-outcome>
+            <redirect/>
+            <to-view-id>login.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+</faces-config>

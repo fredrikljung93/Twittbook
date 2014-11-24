@@ -24,3 +24,7 @@ META-INF/Persistance.xml
 web/META-INF/Persistance.xml
 Twittbook/web/META-INF/Persistance.xml
 Twittbook/Twittbook/web/META-INF/Persistance.xml
+/Twittbook-ui/nbproject/private/
+/Twittbook-ui/build/
+/HelloRest/nbproject/private/
+/HelloRest/build/

@@ -5,11 +5,8 @@
  */
 package ui;
 
-import bo.Helper;
-import bo.User;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
@@ -48,28 +45,16 @@ public class UserBean implements Serializable{
     }
 
     public static ArrayList<UserBean> getAllUsers() {
-        List<User> users = Helper.getAllUsers();
-        ArrayList<UserBean> userbeans = new ArrayList<UserBean>();
-        for(User user: users){
-           UserBean bean = new UserBean();
-           bean.setId(user.getId());
-           bean.setUsername(user.getUsername());
-           userbeans.add(bean);
-        }
-        return userbeans;
+        ArrayList<UserBean> users= new ArrayList<UserBean>();
+        
+        UserBean user = new UserBean(1, "kalle");
+        users.add(user);
+        
+        return users;
     }
 
     public static UserBean getUser(int userid) {
-        User user = Helper.getUser(userid);
-        if (user == null) {
-            System.out.println("User är null!");
-            return null;
-        }
-        System.out.println("User är inte null!");
-        UserBean bean = new UserBean();
-        bean.setId(user.getId());
-        bean.setUsername(user.getUsername());
-        return bean;
+        return new UserBean(1, "kalle");
     }
 
 }

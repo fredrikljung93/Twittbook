@@ -5,8 +5,6 @@
  */
 package ui;
 
-import bo.Helper;
-import bo.User;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,21 +73,17 @@ public class MessageBean {
     }
 
     public String CreateMessage() {
-        date = new Date(System.currentTimeMillis());
-        UserBean sender = (UserBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
-        for(String s:receivers){
-            Helper.sendPrivateMessage(sender.getId(), Integer.parseInt(s), date, message);
-        }
         return "success";
     }
     
     public List<UserBean> getMessageSenders(){
         UserBean receiver = (UserBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("user");
-        List<User> senders = Helper.getMessageSenders(receiver.getId());
+        List<StoredUser> senders = new ArrayList<StoredUser>();
+        senders.add(new StoredUser("sändaruser", "meddelande",1));
         
         List<UserBean> beanSenders = new ArrayList<UserBean>();
         
-        for(User u:senders){
+        for(StoredUser u:senders){
             UserBean bean = new UserBean();
             bean.setId(u.getId());
             bean.setUsername(u.getUsername());

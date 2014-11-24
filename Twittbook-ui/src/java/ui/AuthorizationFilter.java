@@ -1,7 +1,6 @@
 package ui;
 
 
-import bo.User;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -19,9 +18,10 @@ public class AuthorizationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {    
         HttpServletRequest req = (HttpServletRequest) request;
-        User user = (User) req.getSession().getAttribute("user");
+        StoredUser user = (StoredUser) req.getSession().getAttribute("user");
 
         if (user!=null) {
+            System.out.println("AFilter got this user in session: "+user.getUsername());
             // User is logged in, so just continue request.
             chain.doFilter(request, response);
         } else {
