@@ -16,7 +16,7 @@ import javax.faces.bean.SessionScoped;
  */
 @ManagedBean(name = "UserBean")
 @SessionScoped
-public class UserBean implements Serializable{
+public class UserBean implements Serializable {
 
     private int id;
     private String username;
@@ -36,6 +36,7 @@ public class UserBean implements Serializable{
     public void setId(int id) {
         this.id = id;
     }
+
     public String getUsername() {
         return username;
     }
@@ -45,12 +46,27 @@ public class UserBean implements Serializable{
     }
 
     public static ArrayList<UserBean> getAllUsers() {
+<<<<<<< HEAD:Twittbook-ui/src/java/ui/UserBean.java
         ArrayList<UserBean> users= new ArrayList<UserBean>();
         
         UserBean user = new UserBean(1, "kalle");
         users.add(user);
         
         return users;
+=======
+
+        List<User> list = Helper.getAllUsers();
+        ArrayList<UserBean> returnList = new ArrayList();
+      
+        UserBean user;
+        for (User u : list) {
+            user = new UserBean(u.getId(),u.getUsername());
+            returnList.add(user);
+
+        }
+        return returnList;
+        //return (ArrayList<UserBean>) Helper.getAllUsers();
+>>>>>>> b466a4e971f9f988aa6431ae171f819b2716368e:Twittbook/src/java/ui/UserBean.java
     }
 
     public static UserBean getUser(int userid) {

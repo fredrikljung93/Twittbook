@@ -1029,8 +1029,14 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.jpa2-persistence.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.JAVADB_DRIVER_LABEL.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.mysql-connector-java-5.1.34-bin.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+<<<<<<< HEAD
         <copyfiles files="${libs.restapi.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.restlib.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+=======
+        <copyfiles files="${libs.eclipselink.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jandex-1.1.0.final-sources.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jandex-1.1.0.final.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+>>>>>>> b466a4e971f9f988aa6431ae171f819b2716368e
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -1040,8 +1046,14 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.jpa2-persistence.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.JAVADB_DRIVER_LABEL.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.mysql-connector-java-5.1.34-bin.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+<<<<<<< HEAD
         <copyfiles files="${libs.restapi.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.restlib.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+=======
+        <copyfiles files="${libs.eclipselink.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.jandex-1.1.0.final-sources.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.jandex-1.1.0.final.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+>>>>>>> b466a4e971f9f988aa6431ae171f819b2716368e
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 
@@ -18,6 +20,23 @@ import org.hibernate.cfg.Configuration;
  */
 //TODO: Make querys that returns 1 unique result when possible / best.
 public class Helper {
+
+    public static boolean publishPost(Integer userId, Date date, String message) {
+        try {
+            Post post;
+            post = new Post(userId, date, message);
+
+            Session session = (new Configuration().configure().
+                    buildSessionFactory()).openSession();
+            session.beginTransaction();
+
+            session.save(post);
+            session.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public Helper() {
     }
@@ -59,22 +78,6 @@ public class Helper {
 
         return null;
     }
-    public static List<User> getAllUsers() {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-
-        Iterator result = session.createQuery("from User").list().iterator();
-        session.getTransaction().commit();
-
-        ArrayList<User> list = new ArrayList<>();
-        User user;
-        while (result.hasNext()) {
-            user = (User) result.next();
-            list.add(user);
-        }
-        return list;
-    }
 
     public static User loginUser(String username, String password) {
         List result;
@@ -84,8 +87,8 @@ public class Helper {
         result = session.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").list();
 
         if (result.size() > 0) {
-            User user = (User) result.get(0);
-            return user;
+            User tUser = (User) result.get(0);
+            return tUser;
         } else {
             return null;
         }
@@ -112,7 +115,7 @@ public class Helper {
         session.save(user);
         session.getTransaction().commit();
 
-        return getUser(username);
+        return getUser(user.getUsername());
     }
 
     public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String message) {
@@ -135,7 +138,7 @@ public class Helper {
 
     }
 
-    public static boolean publishPost(Integer username, Date date, String message) {
+    public static boolean postMessage(Integer username, Date date, String message) {
 
         try {
             Post post;
@@ -192,27 +195,8 @@ public class Helper {
         return list;
     }
 
-    public static List getFeed(int userId) {
+    public static List<User> getMessageSenders(int receiverid) {
         Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-
-        Iterator result = session.createQuery("from Post as post where post.user ='" + userId + "'").list().iterator();
-        session.getTransaction().commit();
-
-        ArrayList<Post> list = new ArrayList<>();
-
-        Post post;
-        while (result.hasNext()) {
-            post = (Post) result.next();
-            list.add(post);
-
-        }
-        return list;
-    }
-    
-       public static List<User> getMessageSenders(int receiverid) {
-         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
         session.beginTransaction();
 
@@ -225,12 +209,55 @@ public class Helper {
         while (result.hasNext()) {
             message = (Message) result.next();
             User sender = getUser(message.getSender());
-            if(!list.contains(sender)){
+            if (!list.contains(sender)) {
                 list.add(sender);
             }
         }
-        System.out.println("Helper getmessagesenders list size: "+list.size());
+        System.out.println("Helper getmessagesenders list size: " + list.size());
         return list;
     }
 
+    /**@param receiverId
+     @return List of User
+     Method to get a list of Users.*/
+    public static List<User> emGetMessageSenders(int receiverId) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        List<User> list;// = entityManager.createNamedQuery("User.findAll").getResultList();
+
+        Query q = entityManager.createQuery("from Message as m where m.receiver ='" + receiverId + "'");
+        list = q.getResultList();
+        entityManager.close();
+        return list;
+
+    }
+
+    /**
+     * Returns a list of all users.
+     *
+     * @return List of User
+     */
+    public static List<User> getAllUsers() {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        List<User> list;// = entityManager.createNamedQuery("User.findAll").getResultList();
+
+        Query q = entityManager.createQuery("from User u");
+        list = q.getResultList();
+        entityManager.close();
+        return list;
+
+    }
+
+    /**
+     * Returns posts from a specific user.
+     *
+     * @param userId
+     * @return List of Post
+     */
+    public static List getFeed(int userId) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        List<Post> list = entityManager.createQuery("from Post as p where p.user ='" + userId + "'").getResultList();
+        entityManager.close();
+        return list;
+
+    }
 }
