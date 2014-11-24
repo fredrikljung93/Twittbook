@@ -6,7 +6,9 @@
 package ui;
 
 import bo.Helper;
+import bo.Post;
 import bo.User;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -21,9 +23,11 @@ import javax.faces.context.FacesContext;
 @ManagedBean(name = "PostBean")
 @RequestScoped
 public class PostBean {
+    
 
-    private int id;
+    
 
+    
     public int getId() {
         return id;
     }
@@ -55,6 +59,7 @@ public class PostBean {
     public void setUser(int user) {
         this.user = user;
     }
+    private int id;
     private String message;
     private Date date;
     private int user;
@@ -64,14 +69,21 @@ public class PostBean {
      */
     public PostBean() {
     }
+    
+    public PostBean(int id,Date date,int user,String message){
+        this.id = id;
+        this.date=date;
+        this.user=user;
+        this.message=message;
+    }
 
     public String createPost(String message) {
-        if(message==null){
+        if (message == null) {
             System.out.println("Create post received null");
             return "";
         }
-         System.out.println("Create post received "+message);
-        if(message.equals("")){
+        System.out.println("Create post received " + message);
+        if (message.equals("")) {
             return "";
         }
         date = new Date(System.currentTimeMillis());
@@ -81,10 +93,19 @@ public class PostBean {
         return "success";
     }
 
-    public static List<PostBean> getPostsFromUser(int userid) {
-        List<PostBean> list = Helper.getFeed(userid);
-        Collections.reverse(list);
-        return list;
+    public static List<PostBean> getPostsFromUser(int userId) {
+        ArrayList<PostBean> returnList = new ArrayList();
+        List<Post> list = Helper.getFeed(userId);
+
+        PostBean post;
+        for (Post p : list) {
+            post = new PostBean(p.getId(),p.getDate(),p.getUser(),p.getMessage());
+            returnList.add(post);
+
+        }
+        Collections.reverse(returnList);
+        return returnList;
+
     }
 
 }

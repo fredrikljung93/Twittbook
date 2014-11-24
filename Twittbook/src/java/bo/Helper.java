@@ -195,25 +195,6 @@ public class Helper {
         return list;
     }
 
-    public static List getFeed(int userId) {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-
-        Iterator result = session.createQuery("from Post as post where post.user ='" + userId + "'").list().iterator();
-        session.getTransaction().commit();
-
-        ArrayList<Post> list = new ArrayList<>();
-
-        Post post;
-        while (result.hasNext()) {
-            post = (Post) result.next();
-            list.add(post);
-
-        }
-        return list;
-    }
-
     public static List<User> getMessageSenders(int receiverid) {
         Session session = (new Configuration().configure().
                 buildSessionFactory()).openSession();
@@ -236,6 +217,25 @@ public class Helper {
         return list;
     }
 
+    /**@param receiverId
+     @return List of User
+     Method to get a list of Users.*/
+    public static List<User> emGetMessageSenders(int receiverId) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        List<User> list;// = entityManager.createNamedQuery("User.findAll").getResultList();
+
+        Query q = entityManager.createQuery("from Message as m where m.receiver ='" + receiverId + "'");
+        list = q.getResultList();
+        entityManager.close();
+        return list;
+
+    }
+
+    /**
+     * Returns a list of all users.
+     *
+     * @return List of User
+     */
     public static List<User> getAllUsers() {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         List<User> list;// = entityManager.createNamedQuery("User.findAll").getResultList();
@@ -247,9 +247,15 @@ public class Helper {
 
     }
 
-    public static List emGetFeed(int userId) {
+    /**
+     * Returns posts from a specific user.
+     *
+     * @param userId
+     * @return List of Post
+     */
+    public static List getFeed(int userId) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
-        List<Post> list = entityManager.createNamedQuery("User.findAll").getResultList();
+        List<Post> list = entityManager.createQuery("from Post as p where p.user ='" + userId + "'").getResultList();
         entityManager.close();
         return list;
 
