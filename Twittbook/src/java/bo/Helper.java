@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package bo;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -14,12 +8,13 @@ import javax.persistence.Query;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 
-/**
- *
- * @author jonas_000
- */
-//TODO: Make querys that returns 1 unique result when possible / best.
+
+//TODO: Check on login method and all commit() methods.
+//EM login method is called emLoginMethod() at the moment.
 public class Helper {
+
+    public Helper() {
+    }
 
     public static boolean publishPost(Integer userId, Date date, String message) {
         try {
@@ -36,47 +31,6 @@ public class Helper {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    public Helper() {
-    }
-
-    public static User getUser(String username) {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-        Iterator result = session.createQuery("from User as user where user.username='" + username + "'").list().iterator();
-
-        User user;
-        while (result.hasNext()) {
-            user = (User) result.next();
-
-            if (user.getUsername().equals(username)) {
-                return user;
-            }
-
-        }
-
-        return null;
-    }
-
-    public static User getUser(int id) {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-        Iterator result = session.createQuery("from User as user where user.id=" + id + "").list().iterator();
-
-        User user;
-        while (result.hasNext()) {
-            user = (User) result.next();
-
-            if (user.getId() == id) {
-                return user;
-            }
-
-        }
-
-        return null;
     }
 
     public static User loginUser(String username, String password) {
@@ -157,70 +111,11 @@ public class Helper {
 
     }
 
-    public static List getMyInbox(int userId) {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-
-        Iterator result = session.createQuery("from Message as message where message.receiver ='" + userId + "'").list().iterator();
-        session.getTransaction().commit();
-
-        ArrayList<Message> list = new ArrayList<>();
-
-        Message message;
-        while (result.hasNext()) {
-            message = (Message) result.next();
-            list.add(message);
-
-        }
-        return list;
-    }
-
-    public static List getMySentMessages(int userId) {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-
-        Iterator result = session.createQuery("from Message as message where message.sender ='" + userId + "'").list().iterator();
-        session.getTransaction().commit();
-
-        ArrayList<Message> list = new ArrayList<>();
-
-        Message message;
-        while (result.hasNext()) {
-            message = (Message) result.next();
-            list.add(message);
-
-        }
-        return list;
-    }
-
-    public static List<User> getMessageSenders(int receiverid) {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-
-        Iterator result = session.createQuery("from Message as message where message.receiver ='" + receiverid + "'").list().iterator();
-        session.getTransaction().commit();
-
-        ArrayList<User> list = new ArrayList<>();
-
-        Message message;
-        while (result.hasNext()) {
-            message = (Message) result.next();
-            User sender = getUser(message.getSender());
-            if (!list.contains(sender)) {
-                list.add(sender);
-            }
-        }
-        System.out.println("Helper getmessagesenders list size: " + list.size());
-        return list;
-    }
-
-    /**@param receiverId
-     @return List of User
-     Method to get a list of Users.*/
-    public static List<User> emGetMessageSenders(int receiverId) {
+    /**
+     * @param receiverId
+     * @return List of User Method to get a list of Users.
+     */
+    public static List<User> getMessageSenders(int receiverId) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         List<User> list;// = entityManager.createNamedQuery("User.findAll").getResultList();
 
@@ -259,5 +154,67 @@ public class Helper {
         entityManager.close();
         return list;
 
+    }
+
+    /**
+     * @param userId
+     * @return User This method returns a User with the specified userId
+     */
+    public static User getUser(int userId) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        User user = (User) entityManager.createQuery("from User as u where u.id=" + userId + "").getSingleResult();
+        entityManager.close();
+        return user;
+    }
+
+    /**
+     * @param Username
+     * @return User This method returns a User with the specified username.
+     */
+    public static User getUser(String username) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        User user = (User) entityManager.createQuery("from User as user where user.username='" + username + "'").getSingleResult();
+        entityManager.close();
+        return user;
+    }
+
+    /**
+     * @param userId
+     * @return List of Message. returns a list of Messages by a specified user.
+     */
+    public static List<Message> getMyInbox(int userId) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.receiver ='" + userId + "'").getResultList();
+        entityManager.close();
+        return returnList;
+
+    }
+
+    /**
+     * @param userId
+     * @return List of Message. Returns of Messages sent by a specified user.
+     */
+    public static List<Message> getMyOutbox(int userId) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.sender ='" + userId + "'").getResultList();
+        entityManager.close();
+        return returnList;
+    }
+
+    /**
+     * @param username
+     * @param password
+     * @return User Returns a User object if login is successful.
+     */
+    public static User emLoginUser(String username, String password) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        User user = (User) entityManager.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").getSingleResult();
+        entityManager.close();
+
+        if (user != null) {
+            return user;
+        } else {
+            return null;
+        }
     }
 }
