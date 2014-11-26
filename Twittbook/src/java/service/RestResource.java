@@ -70,13 +70,13 @@ public class RestResource {
 
     @GET
     @Path("user")
-    @Produces("application/json")
+    @Produces("application/json; charset=UTF-8")
     public User getUser(@QueryParam("userId") String id) {
-         int userId;
+        int userId;
         try {
             userId = Integer.parseInt(id);
         } catch (NumberFormatException ne) {
-          return null;
+            return null;
         }
         try {
             User user = Helper.getUser(userId);
@@ -88,19 +88,19 @@ public class RestResource {
         }
 
     }
-    
+
     @GET
     @Path("login")
-    @Produces("application/json")
+    @Produces("application/json; charset=UTF-8")
     public User loginUser(@QueryParam("username") String username, @QueryParam("password") String password) {
         User user = Helper.loginUser(username, password);
         return user;
 
     }
-    
+
     @GET
     @Path("userbyname")
-    @Produces("application/json")
+    @Produces("application/json; charset=UTF-8")
     public User getUserByName(@QueryParam("username") String username) {
         User user = Helper.getUser(username);
         return user;
@@ -109,7 +109,7 @@ public class RestResource {
 
     @GET
     @Path("allusers")
-    @Produces("application/json")
+    @Produces("application/json; charset=UTF-8")
     public List<User> getAllUsers() {
         List<User> list = Helper.getAllUsers();
 
@@ -122,7 +122,7 @@ public class RestResource {
 
     @GET
     @Path("feed")
-    @Produces("application/json")
+    @Produces("application/json; charset=UTF-8")
     public List<Post> getFeed(@QueryParam("userId") String userId) {
 
         try {
@@ -149,7 +149,7 @@ public class RestResource {
 
     @GET
     @Path("inbox")
-    @Produces("application/json")
+    @Produces("application/json; charset=UTF-8")
     public List<Message> getInbox(@QueryParam("userId") String userId) {
         try {
             int id = Integer.parseInt(userId);
@@ -162,7 +162,7 @@ public class RestResource {
 
     @GET
     @Path("senders")
-    @Produces("application/json")
+    @Produces("application/json; charset=UTF-8")
     public List<User> getMessageSenders(@QueryParam("userId") String userId) {
         try {
             int id = Integer.parseInt(userId);
