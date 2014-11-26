@@ -162,8 +162,8 @@ public class RestResource {
     @POST
     @Path("post")
     @Consumes("text/plain")
-    public void publishPost(Integer userId, String message) {
-        Helper.publishPost(userId, new Date(), message);
+    public void publishPost(@QueryParam("id")String userId, @QueryParam("message")String message) {
+        Helper.publishPost(Integer.parseInt(userId), new Date(), message);
     }
 
     //TODO: Post methods, login, register, send pm, send post (feed)
