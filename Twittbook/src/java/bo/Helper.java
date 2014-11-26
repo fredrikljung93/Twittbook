@@ -133,7 +133,7 @@ public class Helper {
      */
     public static List<User> getAllUsers() {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
-        List<User> list;// = entityManager.createNamedQuery("User.findAll").getResultList();
+        List<User> list;
 
         Query q = entityManager.createQuery("from User u");
         list = q.getResultList();

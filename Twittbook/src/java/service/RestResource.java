@@ -1,13 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service;
 
 import bo.Helper;
+import bo.Message;
+import bo.Post;
 import bo.User;
 import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -17,12 +15,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
-import ui.entities.UserBean;
 
 /**
  * REST Web Service
- *
- * @author Fredrik
  */
 @Path("rest")
 public class RestResource {
@@ -76,15 +71,93 @@ public class RestResource {
     @GET
     @Path("user")
     @Produces("application/json")
-    public UserBean getUser(@QueryParam("userId") String userId) {
+    public User getUser(@QueryParam("userId") String userId) {
         int id;
-        try{
+        try {
             id = Integer.parseInt(userId);
-            return UserBean.getUser(id);
-        }catch(Exception e){
-            userId = null;
+            User user = Helper.getUser(userId);
+            System.out.println("username = " + user.getUsername() + "------------------");
+            user.setPassword(null);
+            return user;
+        } catch (Exception e) {
+            //
         }
-        return null;
+
+        return new User();
 
     }
+
+    @GET
+    @Path("allusers")
+    @Produces("application/json")
+    public List<User> getAllUsers() {
+        List<User> list = Helper.getAllUsers();
+
+        for (User u : list) {
+            u.setPassword(null);
+        }
+
+        return list;
+    }
+
+    @GET
+    @Path("feed")
+    @Produces("application/json")
+    public List<Post> getFeed(@QueryParam("userId") String userId) {
+
+        try {
+            int id = Integer.parseInt(userId);
+            List<Post> list = Helper.getFeed(id);
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @GET
+    @Path("outbox")
+    @Produces("application/json")
+    public List<Message> getOutbox(@QueryParam("userId") String userId) {
+        try {
+            int id = Integer.parseInt(userId);
+            List<Message> list = Helper.getMyOutbox(id);
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    @GET
+    @Path("inbox")
+    @Produces("application/json")
+    public List<Message> getInbox(@QueryParam("userId") String userId) {
+        try {
+            int id = Integer.parseInt(userId);
+            List<Message> list = Helper.getMyInbox(id);
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    @GET
+    @Path("senders")
+    @Produces("application/json")
+    public List<User> getMessageSenders(@QueryParam("userId") String userId) {
+        try {
+            int id = Integer.parseInt(userId);
+            List<User> list = Helper.getMessageSenders(id);
+            
+            for(User u : list){
+                u.setPassword(null);
+            }
+            
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    //TODO: Post methods, login, register, send pm, send post (feed)
+
 }
