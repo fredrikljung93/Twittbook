@@ -71,8 +71,13 @@ public class RestResource {
     @GET
     @Path("user")
     @Produces("application/json")
-    public User getUser(@QueryParam("userId") int userId) {
-
+    public User getUser(@QueryParam("userId") String id) {
+         int userId;
+        try {
+            userId = Integer.parseInt(id);
+        } catch (NumberFormatException ne) {
+          return null;
+        }
         try {
             User user = Helper.getUser(userId);
             System.out.println("username = " + user.getUsername() + "------------------");
@@ -158,7 +163,7 @@ public class RestResource {
     @POST
     @Path("post")
     @Consumes("text/plain")
-    public void publishPost(@QueryParam("id")String userId, @QueryParam("message")String message) {
+    public void publishPost(@QueryParam("id") String userId, @QueryParam("message") String message) {
         Helper.publishPost(Integer.parseInt(userId), new Date(), message);
     }
 
