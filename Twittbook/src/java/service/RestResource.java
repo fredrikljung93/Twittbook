@@ -4,16 +4,13 @@ import bo.Helper;
 import bo.Message;
 import bo.Post;
 import bo.User;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import static javax.ws.rs.HttpMethod.POST;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
@@ -74,10 +71,9 @@ public class RestResource {
     @GET
     @Path("user")
     @Produces("application/json")
-    public User getUser(@QueryParam("userId") String userId) {
+    public User getUser(@QueryParam("userId") int userId) {
 
         try {
-            int id = Integer.parseInt(userId);
             User user = Helper.getUser(userId);
             System.out.println("username = " + user.getUsername() + "------------------");
             user.setPassword(null);
