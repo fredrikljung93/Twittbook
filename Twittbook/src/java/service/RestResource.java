@@ -5,6 +5,7 @@ import bo.Message;
 import bo.Post;
 import bo.User;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -12,6 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import static javax.ws.rs.HttpMethod.POST;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
@@ -72,18 +75,16 @@ public class RestResource {
     @Path("user")
     @Produces("application/json")
     public User getUser(@QueryParam("userId") String userId) {
-        int id;
+
         try {
-            id = Integer.parseInt(userId);
+            int id = Integer.parseInt(userId);
             User user = Helper.getUser(userId);
             System.out.println("username = " + user.getUsername() + "------------------");
             user.setPassword(null);
             return user;
         } catch (Exception e) {
-            //
+            return null;
         }
-
-        return new User();
 
     }
 
@@ -126,7 +127,7 @@ public class RestResource {
             return null;
         }
     }
-    
+
     @GET
     @Path("inbox")
     @Produces("application/json")
@@ -139,7 +140,7 @@ public class RestResource {
             return null;
         }
     }
-    
+
     @GET
     @Path("senders")
     @Produces("application/json")
@@ -147,17 +148,23 @@ public class RestResource {
         try {
             int id = Integer.parseInt(userId);
             List<User> list = Helper.getMessageSenders(id);
-            
-            for(User u : list){
+
+            for (User u : list) {
                 u.setPassword(null);
             }
-            
+
             return list;
         } catch (Exception e) {
             return null;
         }
     }
-    
-    //TODO: Post methods, login, register, send pm, send post (feed)
 
+    @POST
+    @Path("post")
+    @Consumes("text/plain")
+    public void publishPost(Integer userId, String message) {
+        Helper.publishPost(userId, new Date(), message);
+    }
+
+    //TODO: Post methods, login, register, send pm, send post (feed)
 }
