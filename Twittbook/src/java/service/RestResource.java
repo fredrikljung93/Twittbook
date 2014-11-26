@@ -88,6 +88,24 @@ public class RestResource {
         }
 
     }
+    
+    @GET
+    @Path("login")
+    @Produces("application/json")
+    public User loginUser(@QueryParam("username") String username, @QueryParam("password") String password) {
+        User user = Helper.loginUser(username, password);
+        return user;
+
+    }
+    
+    @GET
+    @Path("userbyname")
+    @Produces("application/json")
+    public User getUserByName(@QueryParam("username") String username) {
+        User user = Helper.getUser(username);
+        return user;
+
+    }
 
     @GET
     @Path("allusers")

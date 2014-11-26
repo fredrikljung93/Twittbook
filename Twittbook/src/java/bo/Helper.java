@@ -173,9 +173,12 @@ public class Helper {
      */
     public static User getUser(String username) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
-        User user = (User) entityManager.createQuery("from User as user where user.username='" + username + "'").getSingleResult();
+        List<User> userlist = (List<User>) entityManager.createQuery("from User as user where user.username='" + username + "'").getResultList();
         entityManager.close();
-        return user;
+        if(userlist.isEmpty()){
+            return null;
+        }
+        return userlist.get(0);
     }
 
     /**
