@@ -10,11 +10,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 /**
  * REST Web Service
@@ -72,15 +75,14 @@ public class RestResource {
     @Path("user")
     @Produces("application/json")
     public User getUser(@QueryParam("userId") String id) {
-         int userId;
+        int userId;
         try {
             userId = Integer.parseInt(id);
         } catch (NumberFormatException ne) {
-          return null;
+            return null;
         }
         try {
             User user = Helper.getUser(userId);
-            System.out.println("username = " + user.getUsername() + "------------------");
             user.setPassword(null);
             return user;
         } catch (Exception e) {
@@ -107,8 +109,13 @@ public class RestResource {
     @Produces("application/json")
     public List<Post> getFeed(@QueryParam("userId") String userId) {
 
+        int id;
         try {
-            int id = Integer.parseInt(userId);
+            try{
+                id = Integer.parseInt(userId);
+            }catch(NumberFormatException e){
+                return null;
+            }
             List<Post> list = Helper.getFeed(id);
             return list;
         } catch (Exception e) {
@@ -121,7 +128,13 @@ public class RestResource {
     @Produces("application/json")
     public List<Message> getOutbox(@QueryParam("userId") String userId) {
         try {
-            int id = Integer.parseInt(userId);
+            int id;
+            try{
+                id = Integer.parseInt(userId);
+            }catch(NumberFormatException e){
+                return null;
+            }
+            
             List<Message> list = Helper.getMyOutbox(id);
             return list;
         } catch (Exception e) {
@@ -134,7 +147,13 @@ public class RestResource {
     @Produces("application/json")
     public List<Message> getInbox(@QueryParam("userId") String userId) {
         try {
-            int id = Integer.parseInt(userId);
+            int id;
+            try{
+            id = Integer.parseInt(userId);    
+            }catch(NumberFormatException e){
+                return null;
+            }
+            
             List<Message> list = Helper.getMyInbox(id);
             return list;
         } catch (Exception e) {
@@ -162,9 +181,61 @@ public class RestResource {
 
     @POST
     @Path("post")
-    @Consumes("text/plain")
-    public void publishPost(@QueryParam("id") String userId, @QueryParam("message") String message) {
-        Helper.publishPost(Integer.parseInt(userId), new Date(), message);
+    public Response publishPost(
+            @FormParam("userId") String userId,
+            @FormParam("message") String message) {
+        int id;
+        try {
+            id = Integer.parseInt(userId);
+        } catch (NumberFormatException e) {
+            return Response.status(418)
+                    .entity("NumberFormatException")
+                    .build();
+        }
+
+        boolean publishPost = Helper.publishPost(id, new Date(), message);
+
+        if (publishPost) {
+            return Response.status(200)
+                    .entity("Post saved successfully.")
+                    .build();
+        } else {
+            return Response.status(418)
+                    .entity("Error, not saved.")
+                    .build();
+        }
+
+    }
+
+    @POST
+    @Path("pm")
+    public Response sendPM(
+            @FormParam("receiver") String receiverId,
+            @FormParam("message") String message,
+            @FormParam("sender") String senderId) {
+        int sId;
+        int rId;
+        try {
+            sId = Integer.parseInt(senderId);
+            rId = Integer.parseInt(receiverId);
+        } catch (NumberFormatException e) {
+            return Response.status(418)
+                    .entity("NumberFormatError")
+                    .build();
+        }
+
+        boolean publishPost = Helper.sendPrivateMessage(sId, rId, new Date(), message);
+
+        if (publishPost) {
+            return Response.status(200)
+                    .entity("PM sent successfully.")
+                    .build();
+        } else {
+            return Response.status(418)
+                    .entity("Error, Not saved.")
+                    .build();
+        }
+
     }
 
     //TODO: Post methods, login, register, send pm, send post (feed)

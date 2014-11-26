@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
-
 
 //TODO: Check on login method and all commit() methods.
 //EM login method is called emLoginMethod() at the moment.
@@ -16,22 +16,7 @@ public class Helper {
     public Helper() {
     }
 
-    public static boolean publishPost(Integer userId, Date date, String message) {
-        try {
-            Post post;
-            post = new Post(userId, date, message);
-
-            Session session = (new Configuration().configure().
-                    buildSessionFactory()).openSession();
-            session.beginTransaction();
-
-            session.save(post);
-            session.getTransaction().commit();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+   
 
     public static User loginUser(String username, String password) {
         List result;
@@ -72,41 +57,49 @@ public class Helper {
         return getUser(user.getUsername());
     }
 
-    public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String message) {
+     public static boolean publishPost(Integer userId, Date date, String message) {
+
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction tx = null;
         try {
-            Message msg;
+            Post post = new Post(userId, date, message);
+            entityManager.getTransaction().begin();
+            entityManager.persist(post);
 
-            msg = new Message(senderId, receiverId, date, message);
-
-            Session session = (new Configuration().configure().
-                    buildSessionFactory()).openSession();
-            session.beginTransaction();
-
-            session.save(msg);
-            session.getTransaction().commit();
+            entityManager.getTransaction().commit();
 
             return true;
-        } catch (Exception e) {
-            return false;
+        } catch (RuntimeException e) {
+            if (tx != null && tx.isActive()) {
+                entityManager.getTransaction().rollback();
+                return false;
+            }
+            throw e;
+        } finally {
+            entityManager.close();
         }
-
     }
-
-    public static boolean postMessage(Integer username, Date date, String message) {
-
+     
+    /**Private message*/
+    public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction tx = null;
         try {
-            Post post;
-            post = new Post(username, date, message);
+            Message message = new Message(senderId, receiverId, date, msg);
+            entityManager.getTransaction().begin();
+            entityManager.persist(message);
 
-            Session session = (new Configuration().configure().
-                    buildSessionFactory()).openSession();
-            session.beginTransaction();
+            entityManager.getTransaction().commit();
 
-            session.save(post);
-            session.getTransaction().commit();
             return true;
-        } catch (Exception e) {
-            return false;
+        } catch (RuntimeException e) {
+            if (tx != null && tx.isActive()) {
+                entityManager.getTransaction().rollback();
+                return false;
+            }
+            throw e;
+        } finally {
+            entityManager.close();
         }
 
     }
