@@ -1,66 +1,50 @@
 package bo;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
-import org.hibernate.Session;
-import org.hibernate.cfg.Configuration;
 
-//TODO: Check on login method and all commit() methods.
-//EM login method is called emLoginMethod() at the moment.
 public class Helper {
 
     public Helper() {
     }
 
-   
+    /**Method to register a user.*/
+    public static User registerUser(String username, String password){
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            User user = new User(username, password);
+            
+            List<User> list = getAllUsers();
+            
+            for(User u:list){
+                if(username.equals(u.getUsername())){
+                    return null;
+                }
+            }
+            
+            entityManager.getTransaction().begin();
+            entityManager.persist(user);
 
-    public static User loginUser(String username, String password) {
-        List result;
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-        result = session.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").list();
+            entityManager.getTransaction().commit();
 
-        if (result.size() > 0) {
-            User tUser = (User) result.get(0);
-            return tUser;
-        } else {
-            return null;
-        }
-
-    }
-
-    public static User registerUser(String username, String password) {
-        Session session = (new Configuration().configure().
-                buildSessionFactory()).openSession();
-        session.beginTransaction();
-        Iterator result = session.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").list().iterator();
-
-        User user = new User(username, password);
-        User tmp;
-        while (result.hasNext()) {
-            tmp = (User) result.next();
-
-            if (tmp.getUsername().equals(user.getUsername())) {
+            return getUser(username);
+        } catch (RuntimeException e) {
+            if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
                 return null;
             }
-
+            throw e;
+        } finally {
+            entityManager.close();
         }
-
-        session.save(user);
-        session.getTransaction().commit();
-
-        return getUser(user.getUsername());
     }
 
+    /**Method to commit a post to User feed*/
      public static boolean publishPost(Integer userId, Date date, String message) {
 
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction tx = null;
         try {
             Post post = new Post(userId, date, message);
             entityManager.getTransaction().begin();
@@ -70,7 +54,7 @@ public class Helper {
 
             return true;
         } catch (RuntimeException e) {
-            if (tx != null && tx.isActive()) {
+            if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
                 return false;
             }
@@ -80,10 +64,9 @@ public class Helper {
         }
     }
      
-    /**Private message*/
+    /**Method to commit a private message.*/
     public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction tx = null;
         try {
             Message message = new Message(senderId, receiverId, date, msg);
             entityManager.getTransaction().begin();
@@ -93,7 +76,7 @@ public class Helper {
 
             return true;
         } catch (RuntimeException e) {
-            if (tx != null && tx.isActive()) {
+            if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
                 return false;
             }
@@ -202,7 +185,7 @@ public class Helper {
      * @param password
      * @return User Returns a User object if login is successful.
      */
-    public static User emLoginUser(String username, String password) {
+    public static User loginUser(String username, String password) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         User user = (User) entityManager.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").getSingleResult();
         entityManager.close();

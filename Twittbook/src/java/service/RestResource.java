@@ -129,9 +129,9 @@ public class RestResource {
 
         int id;
         try {
-            try{
+            try {
                 id = Integer.parseInt(userId);
-            }catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return null;
             }
             List<Post> list = Helper.getFeed(id);
@@ -147,12 +147,12 @@ public class RestResource {
     public List<Message> getOutbox(@QueryParam("userId") String userId) {
         try {
             int id;
-            try{
+            try {
                 id = Integer.parseInt(userId);
-            }catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return null;
             }
-            
+
             List<Message> list = Helper.getMyOutbox(id);
             return list;
         } catch (Exception e) {
@@ -166,12 +166,12 @@ public class RestResource {
     public List<Message> getInbox(@QueryParam("userId") String userId) {
         try {
             int id;
-            try{
-            id = Integer.parseInt(userId);    
-            }catch(NumberFormatException e){
+            try {
+                id = Integer.parseInt(userId);
+            } catch (NumberFormatException e) {
                 return null;
             }
-            
+
             List<Message> list = Helper.getMyInbox(id);
             return list;
         } catch (Exception e) {
@@ -199,6 +199,7 @@ public class RestResource {
 
     @POST
     @Path("publishpost")
+    @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
     public Response publishPost(
             @FormParam("userId") String userId,
             @FormParam("message") String message) {
@@ -227,6 +228,7 @@ public class RestResource {
 
     @POST
     @Path("sendpm")
+    @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
     public Response sendPM(
             @FormParam("receiver") String receiverId,
             @FormParam("message") String message,
@@ -256,5 +258,25 @@ public class RestResource {
 
     }
 
-    //TODO: Post methods, login, register, send pm, send post (feed)
+    @POST
+    @Path("register")
+    @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
+    public Response register(
+            @FormParam("username") String username,
+            @FormParam("password") String password) {
+
+        User user = Helper.registerUser(username, password);
+
+        System.out.println("Teeeeeeeeeeeeeeeeeeeeeeeeeeeest****************** username: "+username+" "+" password: "+ password);
+        if (user != null) {
+            return Response.status(200)
+                    .entity("Registered successfully.")
+                    .build();
+        } else {
+            return Response.status(418)
+                    .entity("Error, user not registered.")
+                    .build();
+        }
+
+    }
 }
