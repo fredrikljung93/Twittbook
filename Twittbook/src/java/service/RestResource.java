@@ -198,7 +198,7 @@ public class RestResource {
     }
 
     @POST
-    @Path("post")
+    @Path("publishpost")
     public Response publishPost(
             @FormParam("userId") String userId,
             @FormParam("message") String message) {
@@ -226,7 +226,7 @@ public class RestResource {
     }
 
     @POST
-    @Path("pm")
+    @Path("sendpm")
     public Response sendPM(
             @FormParam("receiver") String receiverId,
             @FormParam("message") String message,
