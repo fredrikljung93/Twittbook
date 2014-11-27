@@ -1,10 +1,5 @@
 package bo;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
@@ -14,8 +9,8 @@ import org.hibernate.SessionFactory;
 /**
  * Hibernate Utility class with a convenient method to get Session Factory
  * object.
- *
- * @author jonas_000
+ * Also the Utility class for entity manager and entity manager factory.
+ * 
  */
 public class HibernateUtil {
 
