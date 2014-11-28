@@ -20,5 +20,8 @@
         <property name="message" type="string">
             <column name="message" length="5000" />
         </property>
+        <property name="subject" type="string">
+            <column name="subject" length="100" />
+        </property>
     </class>
 </hibernate-mapping>

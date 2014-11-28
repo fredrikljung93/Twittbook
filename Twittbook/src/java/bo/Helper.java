@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+//TODO: Make registerUser (and all other methods using User) to use description field from User.
 public class Helper {
 
     public Helper() {
@@ -17,12 +18,14 @@ public class Helper {
     public static User registerUser(String username, String password){
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
+            
+            
             User user = new User(username, password);
             
             List<User> list = getAllUsers();
             
             for(User u:list){
-                if(username.equals(u.getUsername())){
+                if(username.toUpperCase().equals(u.getUsername().toUpperCase())){
                     return null;
                 }
             }
@@ -98,6 +101,28 @@ public class Helper {
         }
 
     }
+    public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg, String subject) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            
+            Message message = new Message(senderId, receiverId, date, msg, subject);
+            entityManager.getTransaction().begin();
+            entityManager.persist(message);
+
+            entityManager.getTransaction().commit();
+
+            return true;
+        } catch (RuntimeException e) {
+            if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+                return false;
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+
+    }
 
     /**
      * @param receiverId
@@ -156,6 +181,17 @@ public class Helper {
         User user = (User) entityManager.createQuery("from User as u where u.id=" + userId + "").getSingleResult();
         entityManager.close();
         return user;
+    }
+    
+    /**@param messageId ID of Message in DB.
+     @return Message object instanced from DB.
+     Method used to recover a single Message from DB.*/
+     public static Message getMessage(int messageId) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        @SuppressWarnings("JPQLValidation")
+        Message message = (Message) entityManager.createQuery("from Message as m where m.id=" + messageId + "").getSingleResult();
+        entityManager.close();
+        return message;
     }
 
     /**

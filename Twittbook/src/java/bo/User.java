@@ -36,13 +36,27 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "password")
     private String password;
+    @Column(name = "description")
+    private String description;
 
     public User() {
     }
 
-    public User(String username, String password) {
+    public User(String username, String password, String description) {
         this.username = username;
         this.password = password;
+        this.description = description;
+    }
+     public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+    
+    public String getDescription(){
+        return description;
+    }
+    public void setDescription(String description){
+        this.description = description;
     }
 
     public Integer getId() {

@@ -57,9 +57,9 @@ public class RestResource {
     public void putXml(String content) {
     }
 
-    /**@deprecated
-     @return -
-     test method.*/
+    /**
+     * @deprecated @return - test method.
+     */
     @GET
     @Path("password")
     @Produces("text/plain")
@@ -67,9 +67,10 @@ public class RestResource {
         return Helper.getUser("fredrik").getPassword();
     }
 
-    /**@deprecated 
-     @return String
-     testmethod.*/
+    /**
+     * @deprecated @return String
+     testmethod.
+     */
     @GET
     @Path("mess")
     @Produces("text/plain")
@@ -77,9 +78,10 @@ public class RestResource {
         return "Forza bajen!";
     }
 
-    /**@param id PK of User model
-     @return json User object without sensitive data.
-     Fetch a User from a database.*/
+    /**
+     * @param id PK of User model
+     * @return json User object without sensitive data. Fetch a User from a database.
+     */
     @GET
     @Path("user")
     @Produces("application/json; charset=UTF-8")
@@ -100,10 +102,12 @@ public class RestResource {
 
     }
 
-    /**@param username User username.
-     @param password User password.
-     @return json User ,returns the entire Object User
-     Get a User instance to be able to create a session.*/
+    /**
+     * @param username User username.
+     * @param password User password.
+     * @return json User ,returns the entire Object User Get a User instance to
+     * be able to create a session.
+     */
     @GET
     @Path("login")
     @Produces("application/json; charset=UTF-8")
@@ -113,8 +117,9 @@ public class RestResource {
 
     }
 
-    /**@param username Username of User
-     @return json User, returns the Object User with specified username.
+    /**
+     * @param username Username of User
+     * @return json User, returns the Object User with specified username.
      */
     @GET
     @Path("userbyname")
@@ -126,8 +131,9 @@ public class RestResource {
     }
 
     /**
-     @return json List<User>
-     returns a list of User's from database.*/
+     * @return json List<User>
+     * returns a list of User's from database.
+     */
     @GET
     @Path("allusers")
     @Produces("application/json; charset=UTF-8")
@@ -136,14 +142,17 @@ public class RestResource {
 
         for (User u : list) {
             u.setPassword(null);
+            u.setDescription(null);
         }
 
         return list;
     }
 
-    /**@param userId PK for a User in database.
-     @return json List<Post>
-     returns a list of Post's with the specified userId.*/
+    /**
+     * @param userId PK for a User in database.
+     * @return json List<Post>
+     * returns a list of Post's with the specified userId.
+     */
     @GET
     @Path("feed")
     @Produces("application/json; charset=UTF-8")
@@ -163,9 +172,11 @@ public class RestResource {
         }
     }
 
-    /**@param userId
-     @return json List<Message>
-     Returns a list of Message's sent by specified userId.*/
+    /**
+     * @param userId
+     * @return json List<Message>
+     * Returns a list of Message's sent by specified userId.
+     */
     @GET
     @Path("outbox")
     @Produces("application/json")
@@ -179,15 +190,22 @@ public class RestResource {
             }
 
             List<Message> list = Helper.getMyOutbox(id);
+            
+            for(Message m: list){
+                m.setMessage(null);
+            }
+            
             return list;
         } catch (Exception e) {
             return null;
         }
     }
 
-    /**@param userId
-     @return json List<Message>
-     returns a list of Message's received by userId.*/
+    /**
+     * @param userId
+     * @return json List<Message>
+     * returns a list of Message's received by userId.
+     */
     @GET
     @Path("inbox")
     @Produces("application/json; charset=UTF-8")
@@ -201,15 +219,43 @@ public class RestResource {
             }
 
             List<Message> list = Helper.getMyInbox(id);
+            for(Message m: list){
+                m.setMessage(null);
+            }
+
             return list;
         } catch (Exception e) {
             return null;
         }
     }
 
-    /**@param userId PK from User model in DB
-     @return json list of User.
-     Used to get a list User's who sent messages to userId.*/
+    /**@param messageId DB id of Message.
+     @return json Message from DB model.
+     * request to get a specific Message from DB.
+     */
+    @GET
+    @Path("getpm")
+    @Produces("application/json; charset=UTF-8")
+    public Message getPM(@QueryParam("messageId") String messageId) {
+
+        int mId;
+        try {
+            mId = Integer.parseInt(messageId);
+        } catch (NumberFormatException ne) {
+            return null;
+        }
+        try {
+            Message message = Helper.getMessage(mId);
+            return message;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param userId PK from User model in DB
+     * @return json list of User. Used to get a list User's who sent messages to userId.
+     */
     @GET
     @Path("senders")
     @Produces("application/json; charset=UTF-8")
@@ -228,10 +274,11 @@ public class RestResource {
         }
     }
 
-    /**@param userId PK from User model in DB.
-     @param message message to be sent.
-     @return HTTP-response
-     Post message to a Users feed.*/
+    /**
+     * @param userId PK from User model in DB.
+     * @param message message to be sent.
+     * @return HTTP-response Post message to a Users feed.
+     */
     @POST
     @Path("publishpost")
     @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
@@ -261,18 +308,21 @@ public class RestResource {
 
     }
 
-    /**@param receiverId PK of User model in DB.
-     @param message Message to be sent.
-     @param senderId PK of User model in DB.
-     @return HTTP-response
-     Sends a private message from one User to another.*/
+    /**
+     * @param receiverId PK of User model in DB.
+     * @param message Message to be sent.
+     * @param senderId PK of User model in DB.
+     * @param subject title for the message.
+     * @return HTTP-response Sends a private message from one User to another.
+     */
     @POST
     @Path("sendpm")
     @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
     public Response sendPM(
             @FormParam("receiver") String receiverId,
             @FormParam("message") String message,
-            @FormParam("sender") String senderId) {
+            @FormParam("sender") String senderId,
+            @FormParam("subject") String subject) {
         int sId;
         int rId;
         try {
@@ -284,7 +334,7 @@ public class RestResource {
                     .build();
         }
 
-        boolean publishPost = Helper.sendPrivateMessage(sId, rId, new Date(), message);
+        boolean publishPost = Helper.sendPrivateMessage(sId, rId, new Date(), message, subject);
 
         if (publishPost) {
             return Response.status(200)
@@ -298,10 +348,11 @@ public class RestResource {
 
     }
 
-    /**@param username chosen username of User
-     @param password chosen password of User
-     @return HTTP-response
-     Register a User in DB.*/
+    /**
+     * @param username chosen username of User
+     * @param password chosen password of User
+     * @return HTTP-response Register a User in DB.
+     */
     @POST
     @Path("register")
     @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
@@ -310,8 +361,6 @@ public class RestResource {
             @FormParam("password") String password) {
 
         User user = Helper.registerUser(username, password);
-
-        System.out.println("Teeeeeeeeeeeeeeeeeeeeeeeeeeeest****************** username: "+username+" "+" password: "+ password);
         if (user != null) {
             return Response.status(200)
                     .entity("Registered successfully.")

@@ -38,6 +38,9 @@ public class Message implements Serializable {
     private Date date;
     @Column(name = "message")
     private String message;
+    @Column(name = "subject")
+    private String subject;
+    
     public Message() {
     }
 
@@ -46,12 +49,26 @@ public class Message implements Serializable {
         this.receiver = receiver;
         this.date = date;
     }
+    public Message(int sender, int receiver, Date date, String message, String subject) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.date = date;
+        this.message = message;
+        this.subject = subject;
+    }
 
     public Message(int sender, int receiver, Date date, String message) {
         this.sender = sender;
         this.receiver = receiver;
         this.date = date;
         this.message = message;
+    }
+    
+    public String getSubject(){
+        return subject;
+    }
+    public void setSubject(String subject){
+        this.subject = subject;
     }
 
     public Integer getId() {
