@@ -307,6 +307,39 @@ public class RestResource {
         }
 
     }
+    
+    /**@param userId PK of model in DB.
+     @param description text to fill description field of User.
+     @return HTTP-response if successful.
+     Request used to updated a specific User's description in DB.*/
+    @POST
+    @Path("changedescription")
+    @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
+    public Response changeUserDescription(
+            @FormParam("userId") String userId,
+            @FormParam("description") String description) {
+        int id;
+        try {
+            id = Integer.parseInt(userId);
+        } catch (NumberFormatException e) {
+            return Response.status(418)
+                    .entity("NumberFormatException")
+                    .build();
+        }
+
+        boolean updateDesc = Helper.changeUserDescription(id, description);
+
+        if (updateDesc) {
+            return Response.status(200)
+                    .entity("User description updated.")
+                    .build();
+        } else {
+            return Response.status(418)
+                    .entity("Error, not saved.")
+                    .build();
+        }
+
+    }
 
     /**
      * @param receiverId PK of User model in DB.

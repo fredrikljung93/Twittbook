@@ -46,6 +46,34 @@ public class Helper {
             entityManager.close();
         }
     }
+    
+    /**@param userId User's id in DB.
+     @param description User's description to be updated.
+     @return boolean returns true if successful.*/
+     public static boolean changeUserDescription(int userId, String description){
+        
+         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            User user = getUser(userId);
+            
+            user.setDescription(description);
+            
+            entityManager.getTransaction().begin();
+            entityManager.merge(user);
+
+            entityManager.getTransaction().commit();
+
+            return true;
+        } catch (RuntimeException e) {
+            if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+                return false;
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
 
     /**Method to commit a post to User feed
      @param userId FK in db
@@ -182,6 +210,8 @@ public class Helper {
         entityManager.close();
         return user;
     }
+    
+   
     
     /**@param messageId ID of Message in DB.
      @return Message object instanced from DB.
