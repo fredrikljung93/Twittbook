@@ -67,10 +67,10 @@ public class RestResource {
         return Helper.getUser("fredrik").getPassword();
     }
 
-    /**
-     * @deprecated @return String
-     testmethod.
-     */
+  /**
+   * Returns very important message
+   * @return  Mandatory urging
+   */
     @GET
     @Path("mess")
     @Produces("text/plain")
