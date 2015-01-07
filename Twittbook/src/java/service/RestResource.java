@@ -205,6 +205,7 @@ public class RestResource {
      * @param userId
      * @return json List<Message>
      * returns a list of Message's received by userId.
+     * Does not contain message bodies
      */
     @GET
     @Path("inbox")
@@ -223,6 +224,31 @@ public class RestResource {
                 m.setMessage(null);
             }
 
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+     /**
+     * @param userId
+     * @return json List<Message>
+     * returns a list of Message's received by userId.
+     * Does not contain message bodies
+     */
+    @GET
+    @Path("fullinbox")
+    @Produces("application/json; charset=UTF-8")
+    public List<Message> getFullInbox(@QueryParam("userId") String userId) {
+        try {
+            int id;
+            try {
+                id = Integer.parseInt(userId);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+
+            List<Message> list = Helper.getMyInbox(id);
             return list;
         } catch (Exception e) {
             return null;
