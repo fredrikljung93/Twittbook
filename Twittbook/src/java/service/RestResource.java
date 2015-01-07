@@ -2,8 +2,10 @@ package service;
 
 import bo.Helper;
 import bo.Message;
+import bo.MobileMessage;
 import bo.Post;
 import bo.User;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.Context;
@@ -67,10 +69,11 @@ public class RestResource {
         return Helper.getUser("fredrik").getPassword();
     }
 
-  /**
-   * Returns very important message
-   * @return  Mandatory urging
-   */
+    /**
+     * Returns very important message
+     *
+     * @return Mandatory urging
+     */
     @GET
     @Path("mess")
     @Produces("text/plain")
@@ -80,7 +83,8 @@ public class RestResource {
 
     /**
      * @param id PK of User model
-     * @return json User object without sensitive data. Fetch a User from a database.
+     * @return json User object without sensitive data. Fetch a User from a
+     * database.
      */
     @GET
     @Path("user")
@@ -190,11 +194,11 @@ public class RestResource {
             }
 
             List<Message> list = Helper.getMyOutbox(id);
-            
-            for(Message m: list){
+
+            for (Message m : list) {
                 m.setMessage(null);
             }
-            
+
             return list;
         } catch (Exception e) {
             return null;
@@ -204,8 +208,8 @@ public class RestResource {
     /**
      * @param userId
      * @return json List<Message>
-     * returns a list of Message's received by userId.
-     * Does not contain message bodies
+     * returns a list of Message's received by userId. Does not contain message
+     * bodies
      */
     @GET
     @Path("inbox")
@@ -220,7 +224,7 @@ public class RestResource {
             }
 
             List<Message> list = Helper.getMyInbox(id);
-            for(Message m: list){
+            for (Message m : list) {
                 m.setMessage(null);
             }
 
@@ -229,35 +233,42 @@ public class RestResource {
             return null;
         }
     }
-    
-     /**
+
+    /**
      * @param userId
-     * @return json List<Message>
-     * returns a list of Message's received by userId.
-     * Does not contain message bodies
+     * @return json List<MobileMessage>
+     * returns a list of Message's received by userId. Does contain message
+     * bodies
      */
     @GET
     @Path("fullinbox")
     @Produces("application/json; charset=UTF-8")
-    public List<Message> getFullInbox(@QueryParam("userId") String userId) {
+    public List<MobileMessage> getFullInbox(@QueryParam("userId") String userId) {
         try {
-            int id;
-            try {
-                id = Integer.parseInt(userId);
-            } catch (NumberFormatException e) {
-                return null;
+            User user = Helper.getUser(userId);
+            List<Message> list = Helper.getMyInbox(user.getId());
+            List<MobileMessage> output = new ArrayList<>();
+
+            for (Message m : list) {
+                MobileMessage mobileMessage = new MobileMessage();
+                mobileMessage.setMessage(m.getMessage());
+                mobileMessage.setSubject(m.getSubject());
+                mobileMessage.setId(m.getId());
+                mobileMessage.setReceiver(Helper.getUser(m.getReceiver()).getUsername());
+                mobileMessage.setSender(Helper.getUser(m.getSender()).getUsername());
+                output.add(mobileMessage);
             }
 
-            List<Message> list = Helper.getMyInbox(id);
-            return list;
+            return output;
         } catch (Exception e) {
             return null;
         }
     }
 
-    /**@param messageId DB id of Message.
-     @return json Message from DB model.
-     * request to get a specific Message from DB.
+    /**
+     * @param messageId DB id of Message.
+     * @return json Message from DB model. request to get a specific Message
+     * from DB.
      */
     @GET
     @Path("getpm")
@@ -280,7 +291,8 @@ public class RestResource {
 
     /**
      * @param userId PK from User model in DB
-     * @return json list of User. Used to get a list User's who sent messages to userId.
+     * @return json list of User. Used to get a list User's who sent messages to
+     * userId.
      */
     @GET
     @Path("senders")
@@ -333,11 +345,13 @@ public class RestResource {
         }
 
     }
-    
-    /**@param userId PK of model in DB.
-     @param description text to fill description field of User.
-     @return HTTP-response if successful.
-     Request used to updated a specific User's description in DB.*/
+
+    /**
+     * @param userId PK of model in DB.
+     * @param description text to fill description field of User.
+     * @return HTTP-response if successful. Request used to updated a specific
+     * User's description in DB.
+     */
     @POST
     @Path("changedescription")
     @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
