@@ -422,6 +422,38 @@ public class RestResource {
     }
 
     /**
+     * @param receiverId PK of User model in DB.
+     * @param message Message to be sent.
+     * @param senderId PK of User model in DB.
+     * @param subject title for the message.
+     * @return HTTP-response Sends a private message from one User to another.
+     */
+    @POST
+    @Path("mobilesendpm")
+    @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
+    public Response sendMobilePM(
+            @FormParam("receiver") String receivername,
+            @FormParam("message") String message,
+            @FormParam("sender") String sendername,
+            @FormParam("subject") String subject) {
+
+        User sender = Helper.getUser(sendername);
+        User receiver = Helper.getUser(receivername);
+        boolean publishPost = Helper.sendPrivateMessage(sender.getId(), receiver.getId(), new Date(), message, subject);
+
+        if (publishPost) {
+            return Response.status(200)
+                    .entity("PM sent successfully.")
+                    .build();
+        } else {
+            return Response.status(418)
+                    .entity("Error, Not saved.")
+                    .build();
+        }
+
+    }
+
+    /**
      * @param username chosen username of User
      * @param password chosen password of User
      * @return HTTP-response Register a User in DB.
