@@ -25,5 +25,7 @@ META-INF/persistence.xml
 web/META-INF/persistence.xml
 Twittbook/web/META-INF/persistence.xml
 Twittbook/Twittbook/web/META-INF/persistence.xml
-*/Constants.class
 */Constants.java
+Constants.java
+Twittbook/src/java/service
+Twittbook/Twittbook/src/java/service/Constants.java
