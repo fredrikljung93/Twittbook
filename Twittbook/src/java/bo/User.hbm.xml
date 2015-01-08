@@ -16,5 +16,8 @@
         <property name="description" type="string">
             <column length="1000" name="description"/>
         </property>
+        <property name="deviceid" type="string">
+            <column length="100" name="deviceid"/>
+        </property>
     </class>
 </hibernate-mapping>

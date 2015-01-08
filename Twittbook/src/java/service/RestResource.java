@@ -33,6 +33,26 @@ public class RestResource {
      */
     public RestResource() {
     }
+    
+     @POST
+    @Path("updatedeviceid")
+    @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
+    public Response updateDeviceId(
+            @FormParam("username") String username,
+            @FormParam("deviceid") String deviceid) {
+
+        Boolean success = Helper.updateDeviceId(username, deviceid);
+        if (success) {
+            return Response.status(200)
+                    .entity("Updated successfully. username: " +username+" deviceid: "+deviceid)
+                    .build();
+        } else {
+            return Response.status(418)
+                    .entity("Error, new device id not registered. Persist failed.")
+                    .build();
+        }
+
+    }
 
     /**
      * Retrieves representation of an instance of service.RestResource
@@ -297,6 +317,7 @@ public class RestResource {
         boolean publishPost = Helper.publishPost(id, new Date(), message);
 
         if (publishPost) {
+           
             return Response.status(200)
                     .entity("Post saved successfully.")
                     .build();
@@ -323,7 +344,7 @@ public class RestResource {
             id = Integer.parseInt(userId);
         } catch (NumberFormatException e) {
             return Response.status(418)
-                    .entity("NumberFormatException")
+                    .entity("NumberFormatException," + userId)
                     .build();
         }
 
@@ -370,6 +391,8 @@ public class RestResource {
         boolean publishPost = Helper.sendPrivateMessage(sId, rId, new Date(), message, subject);
 
         if (publishPost) {
+            //TODO send push-notice.
+            Helper.sendPushNotice(rId);
             return Response.status(200)
                     .entity("PM sent successfully.")
                     .build();

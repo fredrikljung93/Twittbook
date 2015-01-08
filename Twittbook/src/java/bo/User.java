@@ -38,6 +38,8 @@ public class User implements Serializable {
     private String password;
     @Column(name = "description")
     private String description;
+   @Column(name = "deviceid")
+    private String deviceid;
 
     public User() {
     }
@@ -47,15 +49,17 @@ public class User implements Serializable {
         this.password = password;
         this.description = description;
     }
-     public User(String username, String password) {
+
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
-    
-    public String getDescription(){
+
+    public String getDescription() {
         return description;
     }
-    public void setDescription(String description){
+
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -88,6 +92,14 @@ public class User implements Serializable {
         User user = (User) other;
 
         return user.getId() == id;
+    }
+
+    public void setDeviceid(String deviceid) {
+        this.deviceid = deviceid;
+    }
+
+    public String getDeviceid() {
+        return deviceid;
     }
 
 }
