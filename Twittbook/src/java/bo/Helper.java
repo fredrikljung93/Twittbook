@@ -11,25 +11,27 @@ public class Helper {
     public Helper() {
     }
 
-    /**Method to register a new user user.
-     @param username
-     @param password
-     @return returns the reigstered user if successful*/
-    public static User registerUser(String username, String password){
+    /**
+     * Method to register a new user user.
+     *
+     * @param username
+     * @param password
+     * @return returns the reigstered user if successful
+     */
+    public static User registerUser(String username, String password) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
-            
-            
+
             User user = new User(username, password);
-            
+
             List<User> list = getAllUsers();
-            
-            for(User u:list){
-                if(username.toUpperCase().equals(u.getUsername().toUpperCase())){
+
+            for (User u : list) {
+                if (username.toUpperCase().equals(u.getUsername().toUpperCase())) {
                     return null;
                 }
             }
-            
+
             entityManager.getTransaction().begin(); //Prepares transaction
             entityManager.persist(user); //choose what to save
 
@@ -46,18 +48,20 @@ public class Helper {
             entityManager.close();
         }
     }
-    
-    /**@param userId User's id in DB.
-     @param description User's description to be updated.
-     @return boolean returns true if successful.*/
-     public static boolean changeUserDescription(int userId, String description){
-        
-         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+
+    /**
+     * @param userId User's id in DB.
+     * @param description User's description to be updated.
+     * @return boolean returns true if successful.
+     */
+    public static boolean changeUserDescription(int userId, String description) {
+
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
             User user = getUser(userId);
-            
+
             user.setDescription(description);
-            
+
             entityManager.getTransaction().begin();
             entityManager.merge(user);
 
@@ -75,12 +79,15 @@ public class Helper {
         }
     }
 
-    /**Method to commit a post to User feed
-     @param userId FK in db
-     @param date current date set by Web Service
-     @param message message being posten at userId's wall
-     @return returns true if successfull.*/
-     public static boolean publishPost(Integer userId, Date date, String message) {
+    /**
+     * Method to commit a post to User feed
+     *
+     * @param userId FK in db
+     * @param date current date set by Web Service
+     * @param message message being posten at userId's wall
+     * @return returns true if successfull.
+     */
+    public static boolean publishPost(Integer userId, Date date, String message) {
 
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
@@ -101,13 +108,16 @@ public class Helper {
             entityManager.close();
         }
     }
-     
-    /**Method to commit a private message.
-     @param senderId id PK of user sending message.
-     @param receiverId id PK of user receiving message.
-     @param date date set by Web Service.
-     @param msg message being sent by senderId.
-     @return returns true if successful.*/
+
+    /**
+     * Method to commit a private message.
+     *
+     * @param senderId id PK of user sending message.
+     * @param receiverId id PK of user receiving message.
+     * @param date date set by Web Service.
+     * @param msg message being sent by senderId.
+     * @return returns true if successful.
+     */
     public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
@@ -129,10 +139,11 @@ public class Helper {
         }
 
     }
+
     public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg, String subject) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
-            
+
             Message message = new Message(senderId, receiverId, date, msg, subject);
             entityManager.getTransaction().begin();
             entityManager.persist(message);
@@ -210,13 +221,13 @@ public class Helper {
         entityManager.close();
         return user;
     }
-    
-   
-    
-    /**@param messageId ID of Message in DB.
-     @return Message object instanced from DB.
-     Method used to recover a single Message from DB.*/
-     public static Message getMessage(int messageId) {
+
+    /**
+     * @param messageId ID of Message in DB.
+     * @return Message object instanced from DB. Method used to recover a single
+     * Message from DB.
+     */
+    public static Message getMessage(int messageId) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         @SuppressWarnings("JPQLValidation")
         Message message = (Message) entityManager.createQuery("from Message as m where m.id=" + messageId + "").getSingleResult();
@@ -233,7 +244,7 @@ public class Helper {
         @SuppressWarnings("JPQLValidation")
         List<User> userlist = (List<User>) entityManager.createQuery("from User as user where user.username='" + username + "'").getResultList();
         entityManager.close();
-        if(userlist.isEmpty()){
+        if (userlist.isEmpty()) {
             return null;
         }
         return userlist.get(0);
@@ -247,6 +258,20 @@ public class Helper {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         @SuppressWarnings("JPQLValidation")
         List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.receiver ='" + userId + "'").getResultList();
+        entityManager.close();
+        return returnList;
+
+    }
+
+    /**
+     * @param userId
+     * @return List of Message. returns a list of Messages sent or received by
+     * specific user.
+     */
+    public static List<Message> getNewMessages(int userId, int minid) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        @SuppressWarnings("JPQLValidation")
+        List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.id>"+minid+" and (message.receiver ='" + userId + "' or message.sender='" +userId+"')").getResultList();
         entityManager.close();
         return returnList;
 

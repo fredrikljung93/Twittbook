@@ -237,16 +237,18 @@ public class RestResource {
     /**
      * @param userId
      * @return json List<MobileMessage>
-     * returns a list of Message's received by userId. Does contain message
+     * returns a list of Message's received or sent by userId. Does contain message
      * bodies
      */
     @GET
-    @Path("fullinbox")
+    @Path("allmessages")
     @Produces("application/json; charset=UTF-8")
-    public List<MobileMessage> getFullInbox(@QueryParam("userId") String userId) {
+    public List<MobileMessage> getAllMessages(@QueryParam("userId") String userId,@QueryParam("minId") String minIdString) {
         try {
+            int minId;
+            minId = Integer.parseInt(minIdString);
             User user = Helper.getUser(userId);
-            List<Message> list = Helper.getMyInbox(user.getId());
+            List<Message> list = Helper.getNewMessages(user.getId(),minId);
             List<MobileMessage> output = new ArrayList<>();
 
             for (Message m : list) {
