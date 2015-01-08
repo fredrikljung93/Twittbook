@@ -357,6 +357,20 @@ public class Helper {
 
     /**
      * @param userId
+     * @return List of Message. returns a list of Messages sent or received by
+     * specific user.
+     */
+    public static List<Message> getNewMessages(int userId, int minid) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        @SuppressWarnings("JPQLValidation")
+        List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.id>"+minid+" and (message.receiver ='" + userId + "' or message.sender='" +userId+"')").getResultList();
+        entityManager.close();
+        return returnList;
+
+    }
+
+    /**
+     * @param userId
      * @return List of Message. Returns of Messages sent by a specified user.
      */
     public static List<Message> getMyOutbox(int userId) {
