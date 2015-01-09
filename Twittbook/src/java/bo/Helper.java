@@ -1,121 +1,11 @@
 package bo;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import static java.sql.DriverManager.getConnection;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.net.ssl.HttpsURLConnection;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import service.Constants;
 
 public class Helper {
-
-    private static final String API_KEY = Constants.getAPIKey();
-    private static final String GCM_URL = "https://android.googleapis.com/gcm/send";
-
-    public static String sendPushNotice(int rId) {
-
-        //httppost.addHeader(message, subject);
-        User user = getUser(rId);
-        if (user.getDeviceid() != null) {
-            String url = GCM_URL;
-
-            try {
-                HttpClient client = HttpClientBuilder.create().build();
-
-                HttpPost httppost = new HttpPost(url);
-                List<NameValuePair> nameValuePairs = new ArrayList();
-
-                //httppost.addHeader("Content-Type","json");
-                httppost.addHeader("Authorization:", "key=" + API_KEY);
-
-                nameValuePairs.add(new BasicNameValuePair("registration_ids", user.getDeviceid()));
-
-                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nameValuePairs, "json");
-                System.out.println("Chosen content type: " + entity.getContentType());
-                httppost.setEntity(entity);
-
-                HttpResponse response = null;
-                try {
-                    response = client.execute(httppost);
-                } catch (IOException ex) {
-                    System.out.println("IOEXCEPTION");
-                    System.out.println("Exception message: " + ex.getMessage());
-                }
-                HttpEntity resEntity = response.getEntity();
-                return response.toString();
-            } catch (UnsupportedEncodingException ex) {
-                //Logger.getLogger(RestHelper.class.getName()).log(Level.SEVERE, null, ex);
-                return "failure";
-            }
-
-            /* URL conObj;
-             try {
-             conObj = new URL(url);
-             HttpURLConnection con = (HttpsURLConnection) conObj.openConnection();
-             con.setRequestMethod("POST");
-             con.setRequestProperty(url, url);
-             } catch (MalformedURLException ex) {
-             Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-             } catch (IOException ex) {
-             Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-             }*/
-        }
-        return null;
-    }
-
-    /**
-     * @Deprecated this method is not yet complete and should not be used.
-     */
-    public static String sendPushNotice2(int rId) {
-     //TODO fill in body (regid) when doing post and send it to google gcm.
-        User user = getUser(rId);
-
-        if (user.getDeviceid() != null) {
-
-            try {
-                HttpURLConnection conn = (HttpURLConnection) getConnection(GCM_URL);
-
-                conn.setDoOutput(true);
-                conn.setUseCaches(false);
-
-                //byte[] bytes = body.getBytes();
-                //conn.setFixedLengthStreamingMode(bytes.length);
-                conn.setRequestMethod("POST");
-                //conn.setRequestProperty("Content-Type", API_KEY);
-                conn.setRequestProperty("Authorization", "key=" + API_KEY);
-
-                OutputStream out = conn.getOutputStream();
-            } catch (SQLException ex) {
-                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ProtocolException ex) {
-                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        return null;
-    }
 
     public static boolean updateDeviceId(String username, String deviceid) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
@@ -251,15 +141,16 @@ public class Helper {
      * @param msg message being sent by senderId.
      * @return returns true if successful.
      */
-    public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg) {
+ /*   public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
             Message message = new Message(senderId, receiverId, date, msg);
             entityManager.getTransaction().begin();
             entityManager.persist(message);
 
-            entityManager.getTransaction().commit();
-
+           entityManager.getTransaction().commit();
+           
+            System.out.println("****************** messageid"+message.getId());
             return true;
         } catch (RuntimeException e) {
             if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
@@ -271,9 +162,9 @@ public class Helper {
             entityManager.close();
         }
 
-    }
+    }*/
 
-    public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg, String subject) {
+    public static int sendPrivateMessage(int senderId, int receiverId, Date date, String msg, String subject) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
 
@@ -282,12 +173,14 @@ public class Helper {
             entityManager.persist(message);
 
             entityManager.getTransaction().commit();
+            
+           System.out.println("****************** messageid "+message.getId());
 
-            return true;
+            return message.getId();
         } catch (RuntimeException e) {
             if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
-                return false;
+                return -1;
             }
             throw e;
         } finally {
@@ -295,6 +188,41 @@ public class Helper {
         }
 
     }
+    
+    public static int sendPrivateMessage(String sendername, String receivername, Date date, String msg, String subject) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            
+            User sender = getUser(sendername);
+            User receiver = getUser(receivername);
+            if(sender != null && receiver != null){
+                
+            Message message = new Message(sender.getId(), receiver.getId(), date, msg, subject);
+            entityManager.getTransaction().begin();
+            entityManager.persist(message);
+
+            entityManager.getTransaction().commit();
+            
+            
+           System.out.println("****************** messageid "+message.getId());
+
+            return message.getId();
+            }else{
+                throw new RuntimeException();
+            }
+            
+        } catch (RuntimeException e) {
+            if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+                return -1;
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+
+    }
+    
 
     /**
      * @param receiverId

@@ -35,8 +35,8 @@ public class RestResource {
      */
     public RestResource() {
     }
-    
-     @POST
+
+    @POST
     @Path("updatedeviceid")
     @Consumes("application/x-www-form-urlencoded; charset=UTF-8")
     public Response updateDeviceId(
@@ -46,7 +46,7 @@ public class RestResource {
         Boolean success = Helper.updateDeviceId(username, deviceid);
         if (success) {
             return Response.status(200)
-                    .entity("Updated successfully. username: " +username+" deviceid: "+deviceid)
+                    .entity("Updated successfully. username: " + username + " deviceid: " + deviceid)
                     .build();
         } else {
             return Response.status(418)
@@ -257,18 +257,18 @@ public class RestResource {
     /**
      * @param userId
      * @return json List<MobileMessage>
-     * returns a list of Message's received or sent by userId. Does contain message
-     * bodies
+     * returns a list of Message's received or sent by userId. Does contain
+     * message bodies
      */
     @GET
     @Path("allmessages")
     @Produces("application/json; charset=UTF-8")
-    public List<MobileMessage> getAllMessages(@QueryParam("userId") String userId,@QueryParam("minId") String minIdString) {
+    public List<MobileMessage> getAllMessages(@QueryParam("userId") String userId, @QueryParam("minId") String minIdString) {
         try {
             int minId;
             minId = Integer.parseInt(minIdString);
             User user = Helper.getUser(userId);
-            List<Message> list = Helper.getNewMessages(user.getId(),minId);
+            List<Message> list = Helper.getNewMessages(user.getId(), minId);
             List<MobileMessage> output = new ArrayList<>();
 
             for (Message m : list) {
@@ -357,7 +357,7 @@ public class RestResource {
         boolean publishPost = Helper.publishPost(id, new Date(), message);
 
         if (publishPost) {
-           
+
             return Response.status(200)
                     .entity("Post saved successfully.")
                     .build();
@@ -430,14 +430,20 @@ public class RestResource {
                     .build();
         }
 
-        boolean publishPost = Helper.sendPrivateMessage(sId, rId, new Date(), message, subject);
+        int messageid = Helper.sendPrivateMessage(sId, rId, new Date(), message, subject);
 
-        if (publishPost) {
-            //TODO send push-notice.
-            Helper.sendPushNotice(rId);
+        if (messageid != -1) {
+
+            try {
+                GCMService.sendPushNotice(rId, sId, Integer.toString(messageid));
+
+            } catch (NumberFormatException e) {
+                return Response.status(200).entity("PM sent successfullt, but Messenger pushnotice failed.").build();
+            }
             return Response.status(200)
                     .entity("PM sent successfully.")
                     .build();
+
         } else {
             return Response.status(418)
                     .entity("Error, Not saved.")
@@ -447,9 +453,9 @@ public class RestResource {
     }
 
     /**
-     * @param receiverId PK of User model in DB.
+     * @param receiver PK of User model in DB.
      * @param message Message to be sent.
-     * @param senderId PK of User model in DB.
+     * @param sender PK of User model in DB.
      * @param subject title for the message.
      * @return HTTP-response Sends a private message from one User to another.
      */
@@ -464,9 +470,15 @@ public class RestResource {
 
         User sender = Helper.getUser(sendername);
         User receiver = Helper.getUser(receivername);
-        boolean publishPost = Helper.sendPrivateMessage(sender.getId(), receiver.getId(), new Date(), message, subject);
+        int messageid = Helper.sendPrivateMessage(sendername, receivername, new Date(), message, subject);
 
-        if (publishPost) {
+        if (messageid!=-1) {
+        try {
+                GCMService.sendPushNotice(receivername, sendername, Integer.toString(messageid));
+
+            } catch (NumberFormatException e) {
+                return Response.status(200).entity("PM sent successfullt, but Messenger pushnotice failed.").build();
+            }
             return Response.status(200)
                     .entity("PM sent successfully.")
                     .build();
