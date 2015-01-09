@@ -1,13 +1,20 @@
 package bo;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+import static java.sql.DriverManager.getConnection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.net.ssl.HttpsURLConnection;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.apache.http.HttpEntity;
@@ -23,13 +30,14 @@ import service.Constants;
 public class Helper {
 
     private static final String API_KEY = Constants.getAPIKey();
+    private static final String GCM_URL = "https://android.googleapis.com/gcm/send";
 
     public static String sendPushNotice(int rId) {
 
         //httppost.addHeader(message, subject);
         User user = getUser(rId);
         if (user.getDeviceid() != null) {
-            String url = "https://android.googleapis.com/gcm/send";
+            String url = GCM_URL;
 
             try {
                 HttpClient client = HttpClientBuilder.create().build();
@@ -41,7 +49,6 @@ public class Helper {
                 httppost.addHeader("Authorization:", "key=" + API_KEY);
 
                 nameValuePairs.add(new BasicNameValuePair("registration_ids", user.getDeviceid()));
-                //nameValuePairs.add(new BasicNameValuePair("registration_ids", user.getDeviceId()));
 
                 UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nameValuePairs, "json");
                 System.out.println("Chosen content type: " + entity.getContentType());
@@ -76,7 +83,41 @@ public class Helper {
         return null;
     }
 
-    public static Boolean updateDeviceId(String username, String deviceid) {
+    /**
+     * @Deprecated this method is not yet complete and should not be used.
+     */
+    public static String sendPushNotice2(int rId) {
+     //TODO fill in body (regid) when doing post and send it to google gcm.
+        User user = getUser(rId);
+
+        if (user.getDeviceid() != null) {
+
+            try {
+                HttpURLConnection conn = (HttpURLConnection) getConnection(GCM_URL);
+
+                conn.setDoOutput(true);
+                conn.setUseCaches(false);
+
+                //byte[] bytes = body.getBytes();
+                //conn.setFixedLengthStreamingMode(bytes.length);
+                conn.setRequestMethod("POST");
+                //conn.setRequestProperty("Content-Type", API_KEY);
+                conn.setRequestProperty("Authorization", "key=" + API_KEY);
+
+                OutputStream out = conn.getOutputStream();
+            } catch (SQLException ex) {
+                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ProtocolException ex) {
+                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean updateDeviceId(String username, String deviceid) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
             User user = getUser(username);
@@ -363,7 +404,7 @@ public class Helper {
     public static List<Message> getNewMessages(int userId, int minid) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         @SuppressWarnings("JPQLValidation")
-        List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.id>"+minid+" and (message.receiver ='" + userId + "' or message.sender='" +userId+"')").getResultList();
+        List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.id>" + minid + " and (message.receiver ='" + userId + "' or message.sender='" + userId + "')").getResultList();
         entityManager.close();
         return returnList;
 
