@@ -119,6 +119,7 @@ public class RestResource {
         try {
             User user = Helper.getUser(userId);
             user.setPassword(null);
+            user.setDeviceid(null);
             return user;
         } catch (Exception e) {
             return null;
@@ -150,6 +151,8 @@ public class RestResource {
     @Produces("application/json; charset=UTF-8")
     public User getUserByName(@QueryParam("username") String username) {
         User user = Helper.getUser(username);
+        user.setPassword(null);
+        user.setDeviceid(null);
         return user;
 
     }
@@ -166,6 +169,7 @@ public class RestResource {
 
         for (User u : list) {
             u.setPassword(null);
+            u.setDescription(null);
             u.setDescription(null);
         }
 
@@ -430,14 +434,20 @@ public class RestResource {
                     .build();
         }
 
-        boolean publishPost = Helper.sendPrivateMessage(sId, rId, new Date(), message, subject);
+        int messageid = Helper.sendPrivateMessage(sId, rId, new Date(), message, subject);
 
-        if (publishPost) {
-            //TODO send push-notice.
-            Helper.sendPushNotice(rId);
+        if (messageid != -1) {
+
+            try {
+                GCMService.sendPushNotice(rId, sId, Integer.toString(messageid));
+
+            } catch (NumberFormatException e) {
+                return Response.status(200).entity("PM sent successfullt, but Messenger pushnotice failed.").build();
+            }
             return Response.status(200)
                     .entity("PM sent successfully.")
                     .build();
+
         } else {
             return Response.status(418)
                     .entity("Error, Not saved.")
@@ -447,9 +457,9 @@ public class RestResource {
     }
 
     /**
-     * @param receiverId PK of User model in DB.
+     * @param receiver PK of User model in DB.
      * @param message Message to be sent.
-     * @param senderId PK of User model in DB.
+     * @param sender PK of User model in DB.
      * @param subject title for the message.
      * @return HTTP-response Sends a private message from one User to another.
      */
@@ -464,9 +474,15 @@ public class RestResource {
 
         User sender = Helper.getUser(sendername);
         User receiver = Helper.getUser(receivername);
-        boolean publishPost = Helper.sendPrivateMessage(sender.getId(), receiver.getId(), new Date(), message, subject);
+        int messageid = Helper.sendPrivateMessage(sendername, receivername, new Date(), message, subject);
 
-        if (publishPost) {
+        if (messageid!=-1) {
+        try {
+                GCMService.sendPushNotice(receivername, sendername, Integer.toString(messageid));
+
+            } catch (NumberFormatException e) {
+                return Response.status(200).entity("PM sent successfullt, but Messenger pushnotice failed.").build();
+            }
             return Response.status(200)
                     .entity("PM sent successfully.")
                     .build();

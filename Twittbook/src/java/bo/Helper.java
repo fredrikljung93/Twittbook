@@ -1,134 +1,24 @@
 package bo;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import static java.sql.DriverManager.getConnection;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.net.ssl.HttpsURLConnection;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import service.Constants;
 
 public class Helper {
-    
-    private static final String API_KEY = Constants.getAPIKey();
-    private static final String GCM_URL = "https://android.googleapis.com/gcm/send";
-    
-    public static String sendPushNotice(int rId) {
 
-        //httppost.addHeader(message, subject);
-        User user = getUser(rId);
-        if (user.getDeviceid() != null) {
-            String url = GCM_URL;
-            
-            try {
-                HttpClient client = HttpClientBuilder.create().build();
-                
-                HttpPost httppost = new HttpPost(url);
-                List<NameValuePair> nameValuePairs = new ArrayList();
-
-                //httppost.addHeader("Content-Type","json");
-                httppost.addHeader("Authorization:", "key=" + API_KEY);
-                
-                nameValuePairs.add(new BasicNameValuePair("registration_ids", user.getDeviceid()));
-                
-                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nameValuePairs, "json");
-                System.out.println("Chosen content type: " + entity.getContentType());
-                httppost.setEntity(entity);
-                
-                HttpResponse response = null;
-                try {
-                    response = client.execute(httppost);
-                } catch (IOException ex) {
-                    System.out.println("IOEXCEPTION");
-                    System.out.println("Exception message: " + ex.getMessage());
-                }
-                HttpEntity resEntity = response.getEntity();
-                return response.toString();
-            } catch (UnsupportedEncodingException ex) {
-                //Logger.getLogger(RestHelper.class.getName()).log(Level.SEVERE, null, ex);
-                return "failure";
-            }
-
-            /* URL conObj;
-             try {
-             conObj = new URL(url);
-             HttpURLConnection con = (HttpsURLConnection) conObj.openConnection();
-             con.setRequestMethod("POST");
-             con.setRequestProperty(url, url);
-             } catch (MalformedURLException ex) {
-             Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-             } catch (IOException ex) {
-             Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-             }*/
-        }
-        return null;
-    }
-
-    /**
-     * @Deprecated this method is not yet complete and should not be used.
-     */
-    public static String sendPushNotice2(int rId) {
-        //TODO fill in body (regid) when doing post and send it to google gcm.
-        User user = getUser(rId);
-        
-        if (user.getDeviceid() != null) {
-            
-            try {
-                HttpURLConnection conn = (HttpURLConnection) getConnection(GCM_URL);
-                
-                conn.setDoOutput(true);
-                conn.setUseCaches(false);
-
-                //byte[] bytes = body.getBytes();
-                //conn.setFixedLengthStreamingMode(bytes.length);
-                conn.setRequestMethod("POST");
-                //conn.setRequestProperty("Content-Type", API_KEY);
-                conn.setRequestProperty("Authorization", "key=" + API_KEY);
-                
-                OutputStream out = conn.getOutputStream();
-            } catch (SQLException ex) {
-                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ProtocolException ex) {
-                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        return null;
-    }
-    
     public static boolean updateDeviceId(String username, String deviceid) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
             User user = getUser(username);
-            
+
             user.setDeviceid(deviceid);
-            
+
             entityManager.getTransaction().begin();
             entityManager.merge(user);
-            
+
             entityManager.getTransaction().commit();
-            
+
             return true;
         } catch (RuntimeException e) {
             if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
@@ -140,7 +30,7 @@ public class Helper {
             entityManager.close();
         }
     }
-    
+
     public Helper() {
     }
 
@@ -154,17 +44,17 @@ public class Helper {
     public static User registerUser(String username, String password) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
-            
+
             User user = new User(username, password);
-            
+
             List<User> list = getAllUsers();
-            
+
             for (User u : list) {
                 if (username.toUpperCase().equals(u.getUsername().toUpperCase())) {
                     return null;
                 }
             }
-            
+
             entityManager.getTransaction().begin(); //Prepares transaction
             entityManager.persist(user); //choose what to save
 
@@ -188,18 +78,18 @@ public class Helper {
      * @return boolean returns true if successful.
      */
     public static boolean changeUserDescription(int userId, String description) {
-        
+
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
             User user = getUser(userId);
-            
+
             user.setDescription(description);
-            
+
             entityManager.getTransaction().begin();
             entityManager.merge(user);
-            
+
             entityManager.getTransaction().commit();
-            
+
             return true;
         } catch (RuntimeException e) {
             if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
@@ -221,15 +111,15 @@ public class Helper {
      * @return returns true if successfull.
      */
     public static boolean publishPost(Integer userId, Date date, String message) {
-        
+
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
             Post post = new Post(userId, date, message);
             entityManager.getTransaction().begin();
             entityManager.persist(post);
-            
+
             entityManager.getTransaction().commit();
-            
+
             return true;
         } catch (RuntimeException e) {
             if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
@@ -251,49 +141,84 @@ public class Helper {
      * @param msg message being sent by senderId.
      * @return returns true if successful.
      */
-    public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg) {
+    /*   public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg) {
+     EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+     try {
+     Message message = new Message(senderId, receiverId, date, msg);
+     entityManager.getTransaction().begin();
+     entityManager.persist(message);
+
+     entityManager.getTransaction().commit();
+           
+     System.out.println("****************** messageid"+message.getId());
+     return true;
+     } catch (RuntimeException e) {
+     if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
+     entityManager.getTransaction().rollback();
+     return false;
+     }
+     throw e;
+     } finally {
+     entityManager.close();
+     }
+
+     }*/
+    public static int sendPrivateMessage(int senderId, int receiverId, Date date, String msg, String subject) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
-            Message message = new Message(senderId, receiverId, date, msg);
-            entityManager.getTransaction().begin();
-            entityManager.persist(message);
-            
-            entityManager.getTransaction().commit();
-            
-            return true;
-        } catch (RuntimeException e) {
-            if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-                return false;
-            }
-            throw e;
-        } finally {
-            entityManager.close();
-        }
-        
-    }
-    
-    public static boolean sendPrivateMessage(int senderId, int receiverId, Date date, String msg, String subject) {
-        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
-        try {
-            
+
             Message message = new Message(senderId, receiverId, date, msg, subject);
             entityManager.getTransaction().begin();
             entityManager.persist(message);
-            
+
             entityManager.getTransaction().commit();
-            
-            return true;
+
+            System.out.println("****************** messageid " + message.getId());
+
+            return message.getId();
         } catch (RuntimeException e) {
             if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
-                return false;
+                return -1;
             }
             throw e;
         } finally {
             entityManager.close();
         }
-        
+
+    }
+
+    public static int sendPrivateMessage(String sendername, String receivername, Date date, String msg, String subject) {
+        EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        try {
+
+            User sender = getUser(sendername);
+            User receiver = getUser(receivername);
+            if (sender != null && receiver != null) {
+
+                Message message = new Message(sender.getId(), receiver.getId(), date, msg, subject);
+                entityManager.getTransaction().begin();
+                entityManager.persist(message);
+
+                entityManager.getTransaction().commit();
+
+                System.out.println("****************** messageid " + message.getId());
+
+                return message.getId();
+            } else {
+                throw new RuntimeException();
+            }
+
+        } catch (RuntimeException e) {
+            if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+                return -1;
+            }
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+
     }
 
     /**
@@ -303,13 +228,13 @@ public class Helper {
     public static List<User> getMessageSenders(int receiverId) {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         List<User> list;
-        
+
         @SuppressWarnings("JPQLValidation")
         Query q = entityManager.createQuery("from Message as m where m.receiver ='" + receiverId + "'"); //Creates query
         list = q.getResultList(); //Gets list from query to db
         entityManager.close(); // closing connection.
         return list;
-        
+
     }
 
     /**
@@ -320,12 +245,12 @@ public class Helper {
     public static List<User> getAllUsers() {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         List<User> list;
-        
+
         Query q = entityManager.createQuery("from User u");
         list = q.getResultList();
         entityManager.close();
         return list;
-        
+
     }
 
     /**
@@ -340,7 +265,7 @@ public class Helper {
         List<Post> list = entityManager.createQuery("from Post as p where p.user ='" + userId + "'").getResultList();
         entityManager.close();
         return list;
-        
+
     }
 
     /**
@@ -393,7 +318,7 @@ public class Helper {
         List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.receiver ='" + userId + "'").getResultList();
         entityManager.close();
         return returnList;
-        
+
     }
 
     /**
@@ -407,7 +332,7 @@ public class Helper {
         List<Message> returnList = (List<Message>) entityManager.createQuery("from Message as message where message.id>" + minid + " and (message.receiver ='" + userId + "' or message.sender='" + userId + "')").getResultList();
         entityManager.close();
         return returnList;
-        
+
     }
 
     /**
@@ -431,7 +356,7 @@ public class Helper {
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         User user = (User) entityManager.createQuery("from User as user where user.username='" + username + "' and user.password ='" + password + "'").getSingleResult();
         entityManager.close();
-        
+
         if (user != null) {
             return user;
         } else {
@@ -445,17 +370,17 @@ public class Helper {
      * @return boolean returns true if successful.
      */
     public static boolean setGcmRegId(String username, String deviceid) {
-        
+
         EntityManager entityManager = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
             User user = getUser(username);
-            
+
             user.setDeviceid(deviceid);
-            
+
             entityManager.getTransaction().begin();
             entityManager.merge(user);
             entityManager.getTransaction().commit();
-            
+
             return true;
         } catch (RuntimeException e) {
             if (entityManager.getTransaction() != null && entityManager.getTransaction().isActive()) {
