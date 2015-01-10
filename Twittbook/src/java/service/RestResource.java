@@ -119,6 +119,7 @@ public class RestResource {
         try {
             User user = Helper.getUser(userId);
             user.setPassword(null);
+            user.setDeviceid(null);
             return user;
         } catch (Exception e) {
             return null;
@@ -150,6 +151,8 @@ public class RestResource {
     @Produces("application/json; charset=UTF-8")
     public User getUserByName(@QueryParam("username") String username) {
         User user = Helper.getUser(username);
+        user.setPassword(null);
+        user.setDeviceid(null);
         return user;
 
     }
@@ -166,6 +169,7 @@ public class RestResource {
 
         for (User u : list) {
             u.setPassword(null);
+            u.setDescription(null);
             u.setDescription(null);
         }
 
